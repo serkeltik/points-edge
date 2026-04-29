@@ -29,45 +29,45 @@
             background-size: 20px 20px, 80px 80px, 80px 80px;
         }
 
-        @keyframes glitch-lightning {
-            0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 159, 0.1); }
-            5% { box-shadow: 0 0 25px rgba(0, 255, 159, 0.5), inset 0 0 10px rgba(0, 255, 159, 0.2); }
-            7% { box-shadow: 0 0 15px rgba(0, 255, 159, 0.3); }
-            9% { box-shadow: 0 0 40px rgba(0, 255, 159, 0.8), inset 0 0 15px rgba(0, 255, 159, 0.4); }
-            11% { box-shadow: 0 0 20px rgba(0, 255, 159, 0.2); }
+        @keyframes storm-glitch {
+            0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 159, 0.1); }
+            5% { box-shadow: 0 0 35px rgba(0, 255, 159, 0.5), inset 0 0 15px rgba(0, 255, 159, 0.2); }
+            7% { box-shadow: 0 0 20px rgba(0, 255, 159, 0.2); }
+            9% { box-shadow: 0 0 60px rgba(0, 255, 159, 0.8), inset 0 0 20px rgba(0, 255, 159, 0.4); }
+            11% { box-shadow: 0 0 30px rgba(0, 255, 159, 0.2); }
         }
 
         .lightning-storm {
-            animation: glitch-lightning 4s infinite linear;
+            animation: storm-glitch 5s infinite linear;
             border: 1px solid rgba(0, 255, 159, 0.3);
         }
 
         .neon-glow-orange {
             color: var(--neon-orange);
-            text-shadow: 0 0 8px rgba(255, 102, 0, 0.6);
+            text-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
         }
 
         .neon-glow-green {
             color: var(--neon-green);
-            text-shadow: 0 0 8px rgba(0, 255, 159, 0.6);
+            text-shadow: 0 0 10px rgba(0, 255, 159, 0.7);
         }
 
         .hud-panel {
-            background: rgba(12, 12, 12, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 102, 0, 0.15);
+            background: rgba(15, 15, 15, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 102, 0, 0.2);
             position: relative;
         }
 
         .hud-panel::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 6px; height: 6px;
+            top: 0; left: 0; width: 8px; height: 8px;
             border-top: 2px solid var(--neon-orange);
             border-left: 2px solid var(--neon-orange);
         }
 
-        .section-input {
+        .section-input-dark {
             background-color: var(--panel-grey) !important;
             border: 1px solid #333 !important;
         }
@@ -80,7 +80,7 @@
         .scanline {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 3px;
-            background: rgba(255, 102, 0, 0.03);
+            background: rgba(255, 102, 0, 0.02);
             animation: scanline 15s linear infinite;
             pointer-events: none;
             z-index: 100;
@@ -91,157 +91,166 @@
 
         input, select { 
             background: #0a0a0a !important;
-            border: 1px solid #333 !important;
+            border: 1px solid #444 !important;
             color: var(--neon-orange) !important;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 0.85rem !important;
-            padding: 0.5rem !important;
+            font-size: 1rem !important;
+            padding: 0.6rem !important;
         }
 
         select {
             cursor: pointer;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='%23FF6600' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23FF6600' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.6rem center;
-            padding-right: 1.8rem !important;
+            padding-right: 2rem !important;
         }
 
         input:focus, select:focus {
             border-color: var(--neon-orange) !important;
             outline: none;
-            box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
         }
 
         label {
-            font-size: 8px;
-            letter-spacing: 0.12em;
-            color: #888;
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            color: #aaa;
             text-transform: uppercase;
             font-weight: bold;
+            margin-bottom: 4px;
+            display: block;
         }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-6 selection:bg-orange-600/40">
+<body class="min-h-screen p-4 md:p-8 selection:bg-orange-600/40">
     <div class="scanline"></div>
 
-    <main class="max-w-6xl mx-auto space-y-6 relative z-10 p-4 lightning-storm rounded-xl">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-zinc-800 pb-4">
+    <main class="max-w-7xl mx-auto space-y-8 relative z-10 p-4 lightning-storm rounded-2xl">
+        <!-- TOP HUD STATUS -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-zinc-800 pb-6 px-4">
             <div>
-                <p class="text-[8px] tracking-[0.4em] text-zinc-600 uppercase font-black mb-1 italic">
-                    [SYSTEM_READY] // PROTOCOL_V5.1 // CSR_DEFAULT_DEPLOYED
+                <p class="text-[10px] tracking-[0.4em] text-zinc-500 uppercase font-black mb-1 italic">
+                    [SYSTEM_READY] // PROTOCOL_V5.3 // FONT_SCALE_MAX
                 </p>
-                <h1 class="text-2xl md:text-3xl font-black neon-glow-orange uppercase tracking-tighter leading-none">
+                <h1 class="text-3xl md:text-5xl font-black neon-glow-orange uppercase tracking-tighter leading-none">
                     Points Edge Dashboard
                 </h1>
             </div>
-            <div class="mt-2 md:mt-0 flex gap-4 text-[9px] font-mono text-zinc-500 uppercase tracking-widest">
+            <div class="mt-4 md:mt-0 flex gap-4 text-[10px] font-mono text-zinc-500 uppercase tracking-widest bg-zinc-900/50 p-2 rounded border border-zinc-800">
                 <div class="flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> SIGNAL: STABLE
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> [SIGNAL_STABLE]
                 </div>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-4">
+            <!-- SECTION I: DATA INPUT -->
             <section class="lg:col-span-5 space-y-6">
-                <div class="hud-panel section-input p-6 rounded-lg">
-                    <h2 class="text-[9px] font-bold tracking-[0.3em] text-orange-500 uppercase mb-6 flex items-center gap-2">
-                        <span class="text-sm">&#9632;</span> MISSION_PARAMETERS
+                <div class="hud-panel section-input-dark p-6 rounded-xl">
+                    <h2 class="text-[11px] font-bold tracking-[0.3em] text-orange-500 uppercase mb-6 flex items-center gap-3">
+                        <span class="text-lg">&#9632;</span> MISSION_PARAMETERS
                     </h2>
                     
-                    <div class="space-y-4" id="inputContainer">
+                    <div class="space-y-5" id="inputContainer">
+                        <!-- Selectors injected via JS -->
                     </div>
 
                     <div class="mt-6 pt-6 border-t border-zinc-800">
-                        <div class="bg-purple-600/10 border border-purple-500/20 p-3 rounded flex items-center gap-3">
-                            <div class="text-purple-500/80 text-lg">&#9889;</div>
-                            <p class="text-[7px] text-zinc-400 font-mono leading-tight uppercase">
-                                <span class="text-purple-400/90 font-bold tracking-widest">Rakuten Injection</span><br>
+                        <div class="bg-purple-600/10 border border-purple-500/20 p-4 rounded-lg flex items-center gap-4">
+                            <div class="text-purple-500 text-2xl">&#9889;</div>
+                            <p class="text-[9px] text-zinc-400 font-mono leading-tight uppercase">
+                                <span class="text-purple-400 font-bold tracking-widest">Rakuten Injection</span><br>
                                 50% of Everyday stacked @ 3x
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div class="hud-panel p-4 bg-orange-600/[0.03] rounded-lg border-neon-orange/10">
-                    <h3 class="text-[8px] font-bold text-orange-500/70 uppercase mb-2 tracking-[0.3em]">RRV_DECODE</h3>
-                    <div class="grid grid-cols-3 gap-2 font-mono text-[8px]">
-                        <div class="bg-black/50 p-1.5 rounded text-center border border-zinc-900 font-bold text-green-500">BILT: 2.2c</div>
-                        <div class="bg-black/50 p-1.5 rounded text-center border border-zinc-900 font-bold text-green-500">CHASE: 2.05c</div>
-                        <div class="bg-black/50 p-1.5 rounded text-center border border-zinc-900 font-bold text-orange-500">HYATT: 1.7c</div>
+                <!-- RRV TABLE -->
+                <div class="hud-panel p-6 bg-orange-600/[0.02] rounded-xl border-neon-orange/20">
+                    <h3 class="text-[10px] font-bold text-orange-500/70 uppercase mb-4 tracking-[0.3em] text-center">RRV_DECODE_2026</h3>
+                    <div class="grid grid-cols-3 gap-3 font-mono text-[10px]">
+                        <div class="bg-black p-3 rounded text-center border border-zinc-800"><span class="text-zinc-500 block mb-1">BILT</span><span class="text-green-400 font-bold text-sm">2.2c</span></div>
+                        <div class="bg-black p-3 rounded text-center border border-zinc-800"><span class="text-zinc-500 block mb-1">CHASE</span><span class="text-green-400 font-bold text-sm">2.05c</span></div>
+                        <div class="bg-black p-3 rounded text-center border border-zinc-800"><span class="text-zinc-500 block mb-1">HYATT</span><span class="text-orange-400 font-bold text-sm">1.7c</span></div>
                     </div>
                 </div>
             </section>
 
-            <section class="lg:col-span-7 space-y-6">
+            <!-- SECTION II: HIGH-VISIBILITY ANALYSIS -->
+            <section class="lg:col-span-7 space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="hud-panel p-5 rounded-lg bg-black/40">
-                        <p class="text-[7px] text-zinc-600 uppercase font-black mb-1 tracking-widest leading-none">Monthly Yield</p>
-                        <p id="monthlyPoints" class="text-3xl md:text-4xl font-black neon-glow-orange leading-none">0</p>
-                        <p class="text-[7px] text-zinc-800 font-mono mt-2 uppercase tracking-tighter">Points Generated</p>
+                    <div class="hud-panel p-8 rounded-xl bg-black/40">
+                        <p class="text-[11px] text-zinc-500 uppercase font-black mb-2 tracking-widest leading-none">Monthly Yield</p>
+                        <p id="monthlyPoints" class="text-5xl md:text-6xl font-black neon-glow-orange leading-none">0</p>
+                        <p class="text-[10px] text-zinc-700 font-mono mt-4 uppercase tracking-tighter italic">Points Generated</p>
                     </div>
-                    <div class="hud-panel p-5 rounded-lg border-purple-500/20 bg-black/40">
-                        <p class="text-[7px] text-purple-400 uppercase font-black mb-1 tracking-widest leading-none">Rakuten Bonus (Ann)</p>
-                        <p id="rakutenAnnual" class="text-3xl md:text-4xl font-black text-purple-500 italic leading-none">+0</p>
-                        <p class="text-[7px] text-zinc-800 font-mono mt-2 uppercase tracking-tighter">Portal Yield</p>
+                    <div class="hud-panel p-8 rounded-xl border-purple-500/30 bg-black/40">
+                        <p class="text-[11px] text-purple-400 uppercase font-black mb-2 tracking-widest leading-none">Rakuten Bonus (Ann)</p>
+                        <p id="rakutenAnnual" class="text-5xl md:text-6xl font-black text-purple-500 italic leading-none">+0</p>
+                        <p class="text-[10px] text-zinc-700 font-mono mt-4 uppercase tracking-tighter italic">Portal Yield</p>
                     </div>
                 </div>
 
-                <div class="hud-panel p-5 rounded-lg border-green-500/30 bg-green-500/[0.01]">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                <div class="hud-panel p-10 rounded-xl border-green-500/40 bg-green-500/[0.02]">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-6">
                         <div>
-                            <p class="text-[7px] text-zinc-600 uppercase font-black mb-1 tracking-widest leading-none">Annual Extraction Value</p>
-                            <p id="annualValue" class="text-5xl md:text-6xl font-black neon-glow-green leading-none">$0</p>
+                            <p class="text-[12px] text-zinc-400 uppercase font-black mb-2 tracking-widest leading-none">Annual Extraction Value</p>
+                            <p id="annualValue" class="text-7xl md:text-8xl font-black neon-glow-green leading-none">$0</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-[9px] text-zinc-600 font-mono uppercase tracking-widest leading-none mb-1">Net Fee: <span class="text-white">$385</span></p>
-                            <p class="text-[8px] text-green-700 font-mono uppercase italic font-bold">ROI_OPTIMIZED</p>
+                            <p class="text-[14px] text-zinc-500 font-mono uppercase tracking-widest leading-none mb-2">Net Fee: <span class="text-white">$385</span></p>
+                            <p class="text-[12px] text-green-600 font-mono uppercase italic font-bold">ROI_OPTIMIZED</p>
                         </div>
                     </div>
                     
-                    <div class="bg-zinc-900/40 p-3 border border-zinc-800/50 rounded shadow-inner">
-                        <div class="flex justify-between items-center text-[10px] font-mono uppercase tracking-tight">
-                            <span class="text-zinc-600 italic font-bold">Net Mission Profit:</span>
-                            <span id="netProfit" class="text-xl font-black text-green-500 tracking-tighter">$0</span>
+                    <div class="bg-zinc-900/60 p-6 border-2 border-zinc-800 rounded-lg shadow-2xl">
+                        <div class="flex justify-between items-center text-[16px] font-mono uppercase tracking-tight">
+                            <span class="text-zinc-500 italic font-bold">Net Mission Profit:</span>
+                            <span id="netProfit" class="text-4xl font-black text-green-500 tracking-tighter drop-shadow-lg">$0</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="hud-panel p-5 rounded-lg border-zinc-900 bg-black/20">
-                    <h3 class="text-[8px] font-bold text-orange-500/60 uppercase mb-4 tracking-[0.2em] flex items-center gap-2 leading-none">
+                <!-- DYNAMIC BREAKDOWN CHART -->
+                <div class="hud-panel p-8 rounded-xl border-zinc-800 bg-black/20">
+                    <h3 class="text-[11px] font-bold text-orange-500/60 uppercase mb-6 tracking-[0.2em] flex items-center gap-2 leading-none">
                         <span>&#9632;</span> ANNUAL_INVENTORY_DISTRIBUTION
                     </h3>
-                    <div style="height: 140px; width: 100%;">
+                    <div style="height: 250px; width: 100%;">
                         <canvas id="breakdownChart"></canvas>
                     </div>
                 </div>
 
-                <div class="hud-panel p-4 rounded-lg border-zinc-900 bg-zinc-900/10">
-                    <h4 class="text-[8px] font-bold text-zinc-600 uppercase mb-3 flex items-center gap-2 tracking-widest leading-none">
+                <!-- TARGETS -->
+                <div class="hud-panel p-8 rounded-xl border-zinc-900 bg-zinc-900/20">
+                    <h4 class="text-[11px] font-bold text-zinc-500 uppercase mb-6 flex items-center gap-3 tracking-widest leading-none">
                         <span>&#9992;</span> MISSION_TARGETS
                     </h4>
-                    <div class="grid grid-cols-2 gap-8 font-mono text-[9px]">
-                        <div class="flex justify-between border-b border-zinc-900 pb-1">
-                            <span class="text-zinc-600 uppercase italic">Europe Business (70k)</span>
-                            <span id="euroTarget" class="text-orange-500 font-bold">0x</span>
+                    <div class="grid grid-cols-2 gap-12 font-mono text-[14px]">
+                        <div class="flex justify-between border-b-2 border-zinc-800 pb-2">
+                            <span class="text-zinc-600 uppercase italic font-bold">Europe Biz (70k)</span>
+                            <span id="euroTarget" class="text-orange-500 font-black text-xl">0x</span>
                         </div>
-                        <div class="flex justify-between border-b border-zinc-900 pb-1">
-                            <span class="text-zinc-600 uppercase italic">Luxury Stay (35k)</span>
-                            <span id="luxuryTarget" class="text-orange-500 font-bold">0x</span>
+                        <div class="flex justify-between border-b-2 border-zinc-800 pb-2">
+                            <span class="text-zinc-600 uppercase italic font-bold">Luxury Stay (35k)</span>
+                            <span id="luxuryTarget" class="text-orange-500 font-black text-xl">0x</span>
                         </div>
                     </div>
                 </div>
             </section>
         </div>
 
-        <footer class="mt-4 pt-4 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center text-[7px] font-mono text-zinc-700 tracking-[0.4em] uppercase gap-4">
-            <div class="flex gap-8">
+        <footer class="mt-8 pt-6 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center text-[9px] font-mono text-zinc-700 tracking-[0.4em] uppercase gap-4 px-6">
+            <div class="flex gap-12">
                 <span>LAT: 40.7128° N</span>
                 <span>LONG: 74.0060° W</span>
             </div>
             <div class="flex items-center gap-2">
-                <span class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></span>
-                SYSTEM_STABLE // BUILD_2026_04_28_B
+                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                SYSTEM_STABLE // BUILD_2026_04_28_ULTRA
             </div>
         </footer>
     </main>
@@ -251,7 +260,7 @@
             { id: 'platinum', name: 'Amex Platinum', multipliers: { flight: 5, hotel: 1, travel: 1, dining: 1, grocery: 1, gas: 1, everyday: 1 } },
             { id: 'gold', name: 'Amex Gold', multipliers: { flight: 3, hotel: 1, travel: 1, dining: 4, grocery: 4, gas: 1, everyday: 1 } },
             { id: 'csr', name: 'Chase Sapphire Reserve', multipliers: { flight: 4, hotel: 4, travel: 3, dining: 3, grocery: 1, gas: 1, everyday: 1 } },
-            { id: 'csp', name: 'Chase Sapphire Preferred', multipliers: { flight: 2, hotel: 2, travel: 2, dining: 3, grocery: 1, gas: 1, everyday: 1 } },
+            { id: 'csp', name: 'Chase Sapphire Preferred', multipliers: { flight: 2, hotel: 2, travel: 2, dining: 3, grocery: 3, gas: 1, everyday: 1 } },
             { id: 'citi_strata', name: 'Citi Strata Premier', multipliers: { flight: 3, hotel: 3, travel: 1, dining: 3, grocery: 3, gas: 3, everyday: 1 } },
             { id: 'wf_journey', name: 'WF Autograph Journey', multipliers: { flight: 4, hotel: 5, travel: 1, dining: 3, grocery: 1, gas: 1, everyday: 1 } },
             { id: 'wf_autograph', name: 'WF Autograph', multipliers: { flight: 3, hotel: 3, travel: 3, dining: 3, grocery: 1, gas: 3, everyday: 1 } },
@@ -273,19 +282,20 @@
         const rrvVal = 0.0205; 
         const netFeeVal = 385;
 
+        // Visual Data Labels Plugin (Scaled Up)
         const plugin = {
             id: 'customLabels',
             afterDatasetsDraw: (chart) => {
                 const {ctx, data, chartArea: {right}, scales: {y}} = chart;
                 ctx.save();
-                ctx.font = 'bold 9px Tomorrow';
-                ctx.fillStyle = '#888';
+                ctx.font = 'bold 13px Tomorrow';
+                ctx.fillStyle = '#aaa';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
                 data.datasets[0].data.forEach((value, index) => {
                     if (value > 0) {
                         const yPos = y.getPixelForValue(index);
-                        ctx.fillText(Math.floor(value).toLocaleString(), right + 8, yPos);
+                        ctx.fillText(Math.floor(value).toLocaleString() + ' PTS', right + 12, yPos);
                     }
                 });
                 ctx.restore();
@@ -296,16 +306,15 @@
             const container = document.getElementById('inputContainer');
             categories.forEach(cat => {
                 const row = document.createElement('div');
-                row.className = 'grid grid-cols-12 gap-2 items-end border-b border-zinc-900 pb-3 mb-2';
-                
+                row.className = 'grid grid-cols-12 gap-3 items-end border-b border-zinc-800/50 pb-3 mb-1';
                 row.innerHTML = `
-                    <div class="col-span-4">
+                    <div class="col-span-5">
                         <label>${cat.label}</label>
-                        <input type="number" id="${cat.key}Spend" class="w-full" placeholder="0">
+                        <input type="number" id="${cat.key}Spend" class="w-full rounded" placeholder="0">
                     </div>
-                    <div class="col-span-8">
-                        <label>Hardware Selection</label>
-                        <select id="${cat.key}Card" class="w-full">
+                    <div class="col-span-7">
+                        <label>Hardware</label>
+                        <select id="${cat.key}Card" class="w-full rounded">
                             ${cardDatabase.map(card => `
                                 <option value="${card.id}" ${card.id === 'csr' ? 'selected' : ''}>
                                     ${card.name} (${card.multipliers[cat.key]}x)
@@ -325,19 +334,15 @@
             const chartLabels = [];
 
             categories.forEach(cat => {
-                const spendInput = document.getElementById(`${cat.key}Spend`);
-                const spend = parseFloat(spendInput.value) || 0;
+                const spend = parseFloat(document.getElementById(`${cat.key}Spend`).value) || 0;
                 const cardId = document.getElementById(`${cat.key}Card`).value;
                 const card = cardDatabase.find(c => c.id === cardId);
                 const mult = card.multipliers[cat.key];
-                
                 const catAnn = (spend * mult) * 12;
                 annTotal += catAnn;
-
                 if (cat.key === 'everyday') {
                     rakutenAnn = (spend * 0.5 * 3) * 12;
                 }
-
                 chartData.push(catAnn);
                 chartLabels.push(`${cat.label.toUpperCase()}`);
             });
@@ -354,7 +359,6 @@
             document.getElementById('rakutenAnnual').innerText = '+' + Math.floor(rakutenAnn).toLocaleString();
             document.getElementById('annualValue').innerText = '$' + Math.floor(annVal).toLocaleString();
             document.getElementById('netProfit').innerText = '$' + Math.floor(annProfit).toLocaleString();
-
             document.getElementById('euroTarget').innerText = Math.floor(annTotal / 70000) + 'x';
             document.getElementById('luxuryTarget').innerText = Math.floor(annTotal / 35000) + 'x';
 
@@ -367,51 +371,28 @@
 
         function init() {
             createSelectors();
-            
             const ctx = document.getElementById('breakdownChart').getContext('2d');
             breakdownChart = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        data: [],
-                        backgroundColor: ['#FF6600', '#FF6600', '#FF6600', '#FF6600', '#FF6600', '#FF6600', '#333333', '#9d00ff'],
-                        borderColor: 'transparent',
-                        borderWidth: 0,
-                        borderRadius: 2,
-                        barThickness: 10
-                    }]
-                },
+                data: { labels: [], datasets: [{
+                    data: [],
+                    backgroundColor: ['#FF6600', '#FF6600', '#FF6600', '#FF6600', '#FF6600', '#FF6600', '#444444', '#9d00ff'],
+                    borderColor: 'transparent', borderWidth: 0, borderRadius: 3, barThickness: 16
+                }]},
                 options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: { padding: { right: 60 } },
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#000',
-                            titleFont: { family: 'Tomorrow', size: 10 },
-                            bodyFont: { family: 'Tomorrow', size: 10 },
-                            displayColors: false
-                        }
-                    },
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    layout: { padding: { right: 80 } },
+                    plugins: { legend: { display: false } },
                     scales: {
                         x: { beginAtZero: true, display: false },
-                        y: { 
-                            grid: { display: false }, 
-                            ticks: { color: '#777', font: { family: 'Tomorrow', size: 7, weight: 'bold' } } 
-                        }
+                        y: { grid: { display: false }, ticks: { color: '#888', font: { family: 'Tomorrow', size: 10, weight: 'bold' } } }
                     }
                 },
                 plugins: [plugin]
             });
-
-            const inputs = document.querySelectorAll('input, select');
-            inputs.forEach(el => el.addEventListener('input', updateHUD));
+            document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', updateHUD));
             updateHUD();
         }
-
         window.onload = init;
     </script>
 </body>
