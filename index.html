@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+d<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -30,16 +30,16 @@
         }
 
         @keyframes storm-glitch {
-            0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 159, 0.1); }
-            5% { box-shadow: 0 0 35px rgba(0, 255, 159, 0.5), inset 0 0 15px rgba(0, 255, 159, 0.2); }
-            7% { box-shadow: 0 0 20px rgba(0, 255, 159, 0.2); }
-            9% { box-shadow: 0 0 60px rgba(0, 255, 159, 0.8), inset 0 0 20px rgba(0, 255, 159, 0.4); }
-            11% { box-shadow: 0 0 30px rgba(0, 255, 159, 0.2); }
+            0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 159, 0.1); border-color: rgba(0, 255, 159, 0.2); }
+            5% { box-shadow: 0 0 35px rgba(0, 255, 159, 0.5), inset 0 0 15px rgba(0, 255, 159, 0.2); border-color: rgba(0, 255, 159, 0.8); }
+            7% { box-shadow: 0 0 20px rgba(0, 255, 159, 0.2); border-color: rgba(0, 255, 159, 0.3); }
+            9% { box-shadow: 0 0 60px rgba(0, 255, 159, 0.8), inset 0 0 20px rgba(0, 255, 159, 0.4); border-color: rgba(0, 255, 159, 1); }
+            11% { box-shadow: 0 0 30px rgba(0, 255, 159, 0.2); border-color: rgba(0, 255, 159, 0.3); }
         }
 
         .lightning-storm {
-            animation: storm-glitch 5s infinite linear;
-            border: 1px solid rgba(0, 255, 159, 0.3);
+            animation: storm-glitch 4s infinite linear;
+            border: 2px solid rgba(0, 255, 159, 0.3);
         }
 
         .neon-glow-orange {
@@ -94,8 +94,8 @@
             border: 1px solid #444 !important;
             color: var(--neon-orange) !important;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 1rem !important;
-            padding: 0.6rem !important;
+            font-size: 0.95rem !important;
+            padding: 0.5rem !important;
         }
 
         select {
@@ -107,16 +107,10 @@
             padding-right: 2rem !important;
         }
 
-        input:focus, select:focus {
-            border-color: var(--neon-orange) !important;
-            outline: none;
-            box-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
-        }
-
         label {
             font-size: 9px;
-            letter-spacing: 0.15em;
-            color: #aaa;
+            letter-spacing: 0.12em;
+            color: #888;
             text-transform: uppercase;
             font-weight: bold;
             margin-bottom: 4px;
@@ -132,7 +126,7 @@
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-zinc-800 pb-6 px-4">
             <div>
                 <p class="text-[10px] tracking-[0.4em] text-zinc-500 uppercase font-black mb-1 italic">
-                    [SYSTEM_READY] // PROTOCOL_V5.3 // FONT_SCALE_MAX
+                    [SYSTEM_READY] // PROTOCOL_V5.6 // DATA_VIZ_OPTIMIZED
                 </p>
                 <h1 class="text-3xl md:text-5xl font-black neon-glow-orange uppercase tracking-tighter leading-none">
                     Points Edge Dashboard
@@ -140,7 +134,7 @@
             </div>
             <div class="mt-4 md:mt-0 flex gap-4 text-[10px] font-mono text-zinc-500 uppercase tracking-widest bg-zinc-900/50 p-2 rounded border border-zinc-800">
                 <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> [SIGNAL_STABLE]
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> SIGNAL: STABLE
                 </div>
             </div>
         </header>
@@ -149,9 +143,12 @@
             <!-- SECTION I: DATA INPUT -->
             <section class="lg:col-span-5 space-y-6">
                 <div class="hud-panel section-input-dark p-6 rounded-xl">
-                    <h2 class="text-[11px] font-bold tracking-[0.3em] text-orange-500 uppercase mb-6 flex items-center gap-3">
+                    <h2 class="text-[11px] font-bold tracking-[0.3em] text-orange-500 uppercase mb-2 flex items-center gap-3">
                         <span class="text-lg">&#9632;</span> MISSION_PARAMETERS
                     </h2>
+                    <p class="text-[10px] text-zinc-500 font-mono mb-6 uppercase tracking-widest leading-tight">
+                        &gt; Enter monthly spend in the spaces below:
+                    </p>
                     
                     <div class="space-y-5" id="inputContainer">
                         <!-- Selectors injected via JS -->
@@ -183,12 +180,12 @@
             <section class="lg:col-span-7 space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="hud-panel p-8 rounded-xl bg-black/40">
-                        <p class="text-[11px] text-zinc-500 uppercase font-black mb-2 tracking-widest leading-none">Monthly Yield</p>
+                        <p class="text-sm md:text-base text-zinc-300 uppercase font-black mb-2 tracking-[0.2em] leading-none">Monthly Yield</p>
                         <p id="monthlyPoints" class="text-5xl md:text-6xl font-black neon-glow-orange leading-none">0</p>
                         <p class="text-[10px] text-zinc-700 font-mono mt-4 uppercase tracking-tighter italic">Points Generated</p>
                     </div>
                     <div class="hud-panel p-8 rounded-xl border-purple-500/30 bg-black/40">
-                        <p class="text-[11px] text-purple-400 uppercase font-black mb-2 tracking-widest leading-none">Rakuten Bonus (Ann)</p>
+                        <p class="text-sm md:text-base text-purple-400 uppercase font-black mb-2 tracking-[0.2em] leading-none">Rakuten Bonus (Ann)</p>
                         <p id="rakutenAnnual" class="text-5xl md:text-6xl font-black text-purple-500 italic leading-none">+0</p>
                         <p class="text-[10px] text-zinc-700 font-mono mt-4 uppercase tracking-tighter italic">Portal Yield</p>
                     </div>
@@ -197,19 +194,19 @@
                 <div class="hud-panel p-10 rounded-xl border-green-500/40 bg-green-500/[0.02]">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-6">
                         <div>
-                            <p class="text-[12px] text-zinc-400 uppercase font-black mb-2 tracking-widest leading-none">Annual Extraction Value</p>
+                            <p class="text-sm md:text-base text-zinc-200 uppercase font-black mb-2 tracking-[0.2em] leading-none">Annual Extraction Value</p>
                             <p id="annualValue" class="text-7xl md:text-8xl font-black neon-glow-green leading-none">$0</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-[14px] text-zinc-500 font-mono uppercase tracking-widest leading-none mb-2">Net Fee: <span class="text-white">$385</span></p>
-                            <p class="text-[12px] text-green-600 font-mono uppercase italic font-bold">ROI_OPTIMIZED</p>
+                            <p class="text-xs text-zinc-500 font-mono uppercase tracking-widest leading-none mb-2">Net Fee: <span class="text-white">$385</span></p>
+                            <p class="text-[11px] text-green-600 font-mono uppercase italic font-bold">ROI_OPTIMIZED</p>
                         </div>
                     </div>
                     
-                    <div class="bg-zinc-900/60 p-6 border-2 border-zinc-800 rounded-lg shadow-2xl">
-                        <div class="flex justify-between items-center text-[16px] font-mono uppercase tracking-tight">
+                    <div class="bg-zinc-900/60 p-6 border border-zinc-800 rounded-lg shadow-2xl">
+                        <div class="flex justify-between items-center text-sm md:text-base font-mono uppercase tracking-tight">
                             <span class="text-zinc-500 italic font-bold">Net Mission Profit:</span>
-                            <span id="netProfit" class="text-4xl font-black text-green-500 tracking-tighter drop-shadow-lg">$0</span>
+                            <span id="netProfit" class="text-3xl md:text-4xl font-black text-green-500 tracking-tighter">$0</span>
                         </div>
                     </div>
                 </div>
@@ -219,7 +216,7 @@
                     <h3 class="text-[11px] font-bold text-orange-500/60 uppercase mb-6 tracking-[0.2em] flex items-center gap-2 leading-none">
                         <span>&#9632;</span> ANNUAL_INVENTORY_DISTRIBUTION
                     </h3>
-                    <div style="height: 250px; width: 100%;">
+                    <div style="height: 200px; width: 100%;">
                         <canvas id="breakdownChart"></canvas>
                     </div>
                 </div>
@@ -250,7 +247,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                SYSTEM_STABLE // BUILD_2026_04_28_ULTRA
+                SYSTEM_STABLE // BUILD_2026_04_28_MASTER_V2
             </div>
         </footer>
     </main>
@@ -265,7 +262,8 @@
             { id: 'wf_journey', name: 'WF Autograph Journey', multipliers: { flight: 4, hotel: 5, travel: 1, dining: 3, grocery: 1, gas: 1, everyday: 1 } },
             { id: 'wf_autograph', name: 'WF Autograph', multipliers: { flight: 3, hotel: 3, travel: 3, dining: 3, grocery: 1, gas: 3, everyday: 1 } },
             { id: 'venture_x', name: 'Cap1 Venture X', multipliers: { flight: 2, hotel: 2, travel: 2, dining: 2, grocery: 2, gas: 2, everyday: 2 } },
-            { id: 'bilt', name: 'Bilt Rewards', multipliers: { flight: 2, hotel: 2, travel: 2, dining: 1, grocery: 3, gas: 1, everyday: 1 } }
+            { id: 'bilt', name: 'Bilt Rewards', multipliers: { flight: 2, hotel: 2, travel: 2, dining: 1, grocery: 3, gas: 1, everyday: 1 } },
+            { id: 'savor', name: 'Cap1 Savor', multipliers: { flight: 1, hotel: 1, travel: 1, dining: 3, grocery: 3, gas: 1, everyday: 1 } }
         ];
 
         const categories = [
@@ -282,13 +280,13 @@
         const rrvVal = 0.0205; 
         const netFeeVal = 385;
 
-        // Visual Data Labels Plugin (Scaled Up)
+        // Visual Data Labels Plugin
         const plugin = {
             id: 'customLabels',
             afterDatasetsDraw: (chart) => {
                 const {ctx, data, chartArea: {right}, scales: {y}} = chart;
                 ctx.save();
-                ctx.font = 'bold 13px Tomorrow';
+                ctx.font = 'bold 12px Tomorrow';
                 ctx.fillStyle = '#aaa';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
@@ -385,7 +383,10 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { beginAtZero: true, display: false },
-                        y: { grid: { display: false }, ticks: { color: '#888', font: { family: 'Tomorrow', size: 10, weight: 'bold' } } }
+                        y: { 
+                            grid: { display: false }, 
+                            ticks: { color: '#888', font: { family: 'Tomorrow', size: 12, weight: 'bold' } } 
+                        }
                     }
                 },
                 plugins: [plugin]
