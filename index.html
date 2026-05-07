@@ -3,99 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POINTS_EDGE // MISSION_HUD_V12</title>
+    <title>POINTS_EDGE // MISSION_HUD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tomorrow:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-orange: #FF6600; --neon-green: #00FF9F; --neon-blue: #00D9FF; --cyber-black: #050505; }
-        body { background-color: var(--cyber-black); color: #ffffff; font-family: 'Tomorrow', sans-serif; background-image: radial-gradient(circle at 1px 1px, rgba(255, 102, 0, 0.04) 1px, transparent 0); background-size: 20px 20px; }
-        .lightning-storm { border: 2px solid rgba(0, 255, 159, 0.3); box-shadow: 0 0 15px rgba(0, 255, 159, 0.1); }
-        .hud-panel { background: rgba(15, 15, 15, 0.98); border: 1px solid rgba(255, 102, 0, 0.2); position: relative; }
-        .neon-glow-orange { color: var(--neon-orange); text-shadow: 0 0 10px rgba(255, 102, 0, 0.7); }
-        .neon-glow-green { color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 255, 159, 0.7); }
-        .neon-glow-blue { color: var(--neon-blue); text-shadow: 0 0 10px rgba(0, 217, 255, 0.7); }
-        input, select { background: #0a0a0a !important; border: 1px solid #444 !important; color: var(--neon-orange) !important; font-family: 'Roboto Mono', monospace; padding: 0.4rem !important; width: 100%; font-size: 0.85rem; }
-        label { font-size: 9px; color: #888; text-transform: uppercase; margin-bottom: 2px; display: block; letter-spacing: 1px; font-weight: bold; }
-        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 20px; }
-        input:checked + .slider { background-color: var(--neon-green); }
+        :root {
+            --neon-orange: #FF6600;
+            --neon-green: #00FF9F;
+            --cyber-black: #050505;
+            --panel-grey: #1a1a1a;
+            --rakuten-purple: #9d00ff;
+        }
+
+        body {
+            background-color: var(--cyber-black);
+            color: #ffffff;
+            font-family: 'Tomorrow', sans-serif;
+            background-image: 
+                radial-gradient(circle at 1px 1px, rgba(255, 102, 0, 0.04) 1px, transparent 0),
+                linear-gradient(rgba(0, 255, 159, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 159, 0.01) 1px, transparent 1px);
+            background-size: 20px 20px, 80px 80px, 80px 80px;
+        }
+
+        @keyframes storm-glitch {
+            0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 159, 0.1); border-color: rgba(0, 255, 159, 0.2); }
+            5% { box-shadow: 0 0 35px rgba(0, 255, 159, 0.5), inset 0 0 15px rgba(0, 255, 159, 0.2); border-color: rgba(0, 255, 159, 0.8); }
+            7% { box-shadow: 0 0 20px rgba(0, 255, 159, 0.2); border-color: rgba(0, 255, 159, 0.3); }
+            9% { box-shadow: 0 0 60px rgba(0, 255, 159, 0.8), inset 0 0 20px rgba(0, 255, 159, 0.4); border-color: rgba(0, 255, 159, 1); }
+            11% { box-shadow: 0 0 30px rgba(0, 255, 159, 0.2); border-color: rgba(0, 255, 159, 0.3); }
+        }
+
+        .lightning-storm {
+            animation: storm-glitch 5s infinite linear;
+            border: 2px solid rgba(0, 255, 159, 0.3);
+        }
+
+        .neon-glow-orange {
+            color: var(--neon-orange);
+            text-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
+        }
+
+        .hud-panel {
+            background: rgba(15, 15, 15, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 102, 0, 0.2);
+            position: relative;
+        }
+
+        input, select { 
+            background: #0a0a0a !important;
+            border: 1px solid #444 !important;
+            color: var(--neon-orange) !important;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 0.5rem !important;
+        }
+
+        label {
+            font-size: 9px;
+            letter-spacing: 0.12em;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: block;
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
-    <main class="max-w-7xl mx-auto space-y-6 p-6 lightning-storm rounded-2xl bg-black">
-        <header class="flex flex-col md:flex-row justify-between items-center border-b border-zinc-800 pb-4">
+    <main class="max-w-7xl mx-auto space-y-8 relative p-4 lightning-storm rounded-2xl">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-zinc-800 pb-6 px-4">
             <div>
-                <p class="text-[9px] tracking-[0.4em] text-zinc-500 font-black uppercase">[PROTOCOL_V12 // ANALYTICS_RESTORED]</p>
-                <h1 class="text-2xl md:text-4xl font-black neon-glow-orange uppercase italic">Points Edge Dashboard</h1>
-            </div>
-            <div class="flex gap-8 items-center mt-4 md:mt-0">
-                <div class="text-right">
-                    <label>Bilt Spend Ratio</label>
-                    <p id="biltRatioDisplay" class="neon-glow-blue font-black text-2xl">0%</p>
-                </div>
-                <div class="text-green-400 text-[10px] font-mono bg-zinc-900 p-2 border border-zinc-800">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse inline-block"></span> SIGNAL_STABLE
-                </div>
+                <p class="text-[10px] tracking-[0.4em] text-zinc-500 uppercase font-black mb-1 italic">
+                    [SYSTEM_READY] // PROTOCOL_V9.0 // SPEND_ONLY_MODE
+                </p>
+                <h1 class="text-3xl md:text-5xl font-black neon-glow-orange uppercase tracking-tighter">
+                    Points Edge Dashboard
+                </h1>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-4">
             <section class="lg:col-span-5 space-y-6">
-                <div class="hud-panel p-6 rounded-xl">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xs font-black text-orange-500 uppercase tracking-widest">> MISSION_PARAMETERS</h2>
-                        <div class="bg-zinc-900 p-2 border border-zinc-700 rounded">
-                            <label style="margin-bottom:0; font-size: 8px;">Obsidian Mode</label>
-                            <select id="obsidianPivot" onchange="updateHUD()" style="border:none; padding:0!important; height:auto;">
-                                <option value="dining">3x Dining</option>
-                                <option value="grocery">3x Grocery</option>
-                            </select>
+                <div class="hud-panel p-6 rounded-xl border border-zinc-800">
+                    <h2 class="text-xs font-black tracking-[0.4em] text-orange-500 uppercase mb-3">> MISSION_PARAMETERS</h2>
+                    <div class="space-y-5" id="inputContainer">
                         </div>
-                    </div>
-                    
-                    <div id="inputContainer" class="space-y-3"></div>
-
-                    <div class="mt-8 pt-6 border-t border-zinc-800">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <h3 class="text-sm font-bold text-white uppercase">Mortgage Extraction</h3>
-                                <p class="text-[8px] text-zinc-500 font-mono">BILT 75% SPEND RULE</p>
-                            </div>
-                            <label class="switch"><input type="checkbox" id="mortgageToggle" onchange="updateHUD()"><span class="slider"></span></label>
-                        </div>
-                        <div id="mortgageField" class="mt-4 hidden">
-                            <label>Monthly Mortgage Amount ($)</label>
-                            <input type="number" id="mortgageAmount" placeholder="0" oninput="updateHUD()">
-                            <p id="mortgageStatus" class="text-[9px] mt-2 font-mono uppercase font-bold"></p>
-                        </div>
-                    </div>
                 </div>
             </section>
 
-            <section class="lg:col-span-7 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="hud-panel p-4 rounded-xl text-center">
-                        <label>Monthly Yield</label>
-                        <p id="monthlyPoints" class="text-3xl font-black neon-glow-orange">0</p>
-                        <p class="text-[8px] text-zinc-600 font-mono mt-1">PTS / MO</p>
+            <section class="lg:col-span-7 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="hud-panel p-8 rounded-xl bg-black/40 border border-zinc-800">
+                        <p class="text-lg text-zinc-300 uppercase font-black mb-3">Monthly Yield</p>
+                        <p id="monthlyPoints" class="text-5xl font-black neon-glow-orange">0</p>
+                        <p id="rakutenMonthlySub" class="text-[10px] text-purple-400 italic mt-4">+0 Rakuten Potential</p>
                     </div>
-                    <div class="hud-panel p-4 rounded-xl text-center border-zinc-700">
-                        <label>Annual Inventory</label>
-                        <p id="annualPoints" class="text-3xl font-black text-white">0</p>
-                        <p class="text-[8px] text-zinc-600 font-mono mt-1">TOTAL PTS / YR</p>
-                    </div>
-                    <div class="hud-panel p-4 rounded-xl text-center bg-green-500/5">
-                        <label>Extraction Value</label>
-                        <p id="annualValue" class="text-3xl font-black neon-glow-green">$0</p>
-                        <p class="text-[8px] text-zinc-600 font-mono mt-1">USD VALUATION</p>
+                    <div class="hud-panel p-8 rounded-xl border-zinc-800 bg-black/40">
+                        <p class="text-lg text-zinc-300 uppercase font-black mb-3">Annual Valuation</p>
+                        <p id="annualValue" class="text-5xl font-black text-[#00FF9F]">$0</p>
+                        <p class="text-[10px] text-zinc-600 italic mt-4">@ 2.05 CPP Protocol</p>
                     </div>
                 </div>
 
-                <div class="hud-panel p-6 rounded-xl">
-                    <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-4 tracking-[0.2em]">> INVENTORY_DISTRIBUTION</h3>
-                    <div style="height: 400px;"><canvas id="breakdownChart"></canvas></div>
+                <div class="hud-panel p-8 rounded-xl border-zinc-800 bg-black/20">
+                    <div style="height: 250px; width: 100%;">
+                        <canvas id="breakdownChart"></canvas>
+                    </div>
                 </div>
             </section>
         </div>
@@ -103,20 +119,17 @@
 
     <script>
         const cardDatabase = [
-            { id: 'csr', name: 'Sapphire Reserve', multipliers: { flight: 4, hotel: 4, travel: 1, dining: 3, grocery: 1, drugstores: 1, everyday: 1 } },
-            { id: 'palladium', name: 'Bilt Palladium', multipliers: { flight: 2, hotel: 2, travel: 2, dining: 2, grocery: 2, drugstores: 2, everyday: 2 } },
-            { id: 'obsidian', name: 'Bilt Obsidian', multipliers: { flight: 2, hotel: 2, travel: 2, dining: 3, grocery: 3, drugstores: 1, everyday: 1 } },
-            { id: 'freedom', name: 'Freedom Unlimited', multipliers: { flight: 1.5, hotel: 1.5, travel: 1.5, dining: 3, grocery: 1.5, drugstores: 3, everyday: 1.5 } }
+            { id: 'csr', name: 'Sapphire Reserve', multipliers: { flight: 4, hotel: 4, travel: 1, dining: 3, grocery: 1, everyday: 1 } },
+            { id: 'platinum', name: 'Amex Platinum', multipliers: { flight: 5, hotel: 1, travel: 1, dining: 1, grocery: 1, everyday: 1 } },
+            { id: 'venture_x', name: 'Cap1 Venture X', multipliers: { flight: 2, hotel: 2, travel: 2, dining: 2, grocery: 2, everyday: 2 } }
         ];
 
         const categories = [
             { key: 'flight', label: 'Flights' },
             { key: 'hotel', label: 'Hotels' },
-            { key: 'travel', label: 'Other Travel' },
             { key: 'dining', label: 'Dining' },
             { key: 'grocery', label: 'Groceries' },
-            { key: 'drugstores', label: 'Drug Stores' },
-            { key: 'everyday', label: 'Everyday Catch-All' }
+            { key: 'everyday', label: 'Everyday Catch-all' }
         ];
 
         let breakdownChart;
@@ -124,65 +137,42 @@
         function createSelectors() {
             const container = document.getElementById('inputContainer');
             categories.forEach(cat => {
-                const div = document.createElement('div');
-                div.className = 'grid grid-cols-2 gap-3 border-b border-zinc-800/50 pb-2';
-                div.innerHTML = `
-                    <div><label>${cat.label} ($)</label><input type="number" id="${cat.key}Spend" placeholder="0" oninput="updateHUD()"></div>
-                    <div><label>Hardware</label><select id="${cat.key}Card" onchange="updateHUD()">
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-12 gap-3 items-end border-b border-zinc-800 pb-3';
+                row.innerHTML = `
+                    <div class="col-span-5"><label>${cat.label}</label><input type="number" id="${cat.key}Spend" class="w-full" placeholder="0"></div>
+                    <div class="col-span-7"><label>Hardware</label><select id="${cat.key}Card" class="w-full">
                     ${cardDatabase.map(card => `<option value="${card.id}">${card.name}</option>`).join('')}</select></div>`;
-                container.appendChild(div);
+                container.appendChild(row);
             });
         }
 
         function updateHUD() {
-            let biltSpend = 0, totalSpend = 0, monthlyPts = 0;
-            const cData = [], cLabels = [], cColors = [];
-            const pivot = document.getElementById('obsidianPivot').value;
-            const mActive = document.getElementById('mortgageToggle').checked;
-            const mAmt = parseFloat(document.getElementById('mortgageAmount').value) || 0;
-            
-            document.getElementById('mortgageField').style.display = mActive ? 'block' : 'none';
+            let cardAnnTotal = 0;
+            let rakutenAnn = 0;
+            const chartData = [];
+            const chartLabels = [];
 
             categories.forEach(cat => {
                 const spend = parseFloat(document.getElementById(`${cat.key}Spend`).value) || 0;
                 const cardId = document.getElementById(`${cat.key}Card`).value;
-                const card = JSON.parse(JSON.stringify(cardDatabase.find(c => c.id === cardId)));
+                const card = cardDatabase.find(c => c.id === cardId);
+                const mult = card.multipliers[cat.key];
+                const catAnn = (spend * mult) * 12;
+                cardAnnTotal += catAnn;
 
-                if (card.id === 'obsidian') {
-                    if (pivot === 'dining' && cat.key === 'grocery') card.multipliers.grocery = 1;
-                    if (pivot === 'grocery' && cat.key === 'dining') card.multipliers.dining = 1;
-                }
-
-                const pts = spend * card.multipliers[cat.key];
-                monthlyPts += pts; totalSpend += spend;
-                if (card.id === 'palladium' || card.id === 'obsidian') biltSpend += spend;
-
-                cData.push(pts * 12); cLabels.push(cat.label.toUpperCase()); cColors.push('#FF6600');
+                if (cat.key === 'everyday') { rakutenAnn = (spend * 0.5 * 3) * 12; }
+                chartData.push(catAnn);
+                chartLabels.push(cat.label.toUpperCase());
             });
 
-            const ratio = totalSpend > 0 ? (biltSpend / totalSpend) * 100 : 0;
-            document.getElementById('biltRatioDisplay').innerText = Math.floor(ratio) + '%';
-
-            if (mActive && mAmt > 0) {
-                const req = mAmt * 0.75;
-                const st = document.getElementById('mortgageStatus');
-                if (biltSpend >= req) {
-                    st.innerText = ">> [SUCCESS] 75% MET. PAYLOAD SECURED."; st.style.color = "#00FF9F";
-                    monthlyPts += mAmt; 
-                    cData.push(mAmt * 12); cLabels.push('MORTGAGE BONUS'); cColors.push('#00FF9F');
-                } else {
-                    st.innerText = `>> [FAIL] NEED $${Math.ceil(req - biltSpend)} MORE BILT SPEND.`; st.style.color = "#FF6600";
-                }
-            }
-
-            document.getElementById('monthlyPoints').innerText = Math.floor(monthlyPts).toLocaleString();
-            document.getElementById('annualPoints').innerText = Math.floor(monthlyPts * 12).toLocaleString();
-            document.getElementById('annualValue').innerText = '$' + Math.floor(monthlyPts * 12 * 0.0205).toLocaleString();
+            document.getElementById('monthlyPoints').innerText = Math.floor(cardAnnTotal / 12).toLocaleString();
+            document.getElementById('rakutenMonthlySub').innerText = `+${Math.floor(rakutenAnn / 12).toLocaleString()} Rakuten Potential`;
+            document.getElementById('annualValue').innerText = '$' + Math.floor((cardAnnTotal + rakutenAnn) * 0.0205).toLocaleString();
 
             if (breakdownChart) {
-                breakdownChart.data.labels = cLabels;
-                breakdownChart.data.datasets[0].data = cData;
-                breakdownChart.data.datasets[0].backgroundColor = cColors;
+                breakdownChart.data.labels = [...chartLabels, 'RAKUTEN'];
+                breakdownChart.data.datasets[0].data = [...chartData, rakutenAnn];
                 breakdownChart.update();
             }
         }
@@ -191,11 +181,12 @@
             createSelectors();
             const ctx = document.getElementById('breakdownChart').getContext('2d');
             breakdownChart = new Chart(ctx, {
-                type: 'bar', data: { labels: [], datasets: [{ data: [], backgroundColor: [], borderRadius: 4, barThickness: 15 }]},
+                type: 'bar',
+                data: { labels: [], datasets: [{ data: [], backgroundColor: '#FF6600', borderRadius: 3 }]},
                 options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-                    scales: { x: { display: false }, y: { ticks: { color: '#888', font: { family: 'Tomorrow', size: 10 } } } } }
+                scales: { x: { display: false }, y: { ticks: { color: '#888', font: { family: 'Tomorrow' } } } } }
             });
-            updateHUD();
+            document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', updateHUD));
         };
     </script>
 </body>
