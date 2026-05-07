@@ -47,6 +47,11 @@
             text-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
         }
 
+        .neon-glow-green {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px rgba(0, 255, 159, 0.7);
+        }
+
         .hud-panel {
             background: rgba(15, 15, 15, 0.98);
             backdrop-filter: blur(12px);
@@ -54,12 +59,38 @@
             position: relative;
         }
 
+        .hud-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 8px; height: 8px;
+            border-top: 2px solid var(--neon-orange);
+            border-left: 2px solid var(--neon-orange);
+        }
+
+        .section-input-dark {
+            background-color: var(--panel-grey) !important;
+            border: 1px solid #333 !important;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
         input, select { 
             background: #0a0a0a !important;
             border: 1px solid #444 !important;
             color: var(--neon-orange) !important;
             font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem !important;
             padding: 0.5rem !important;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23FF6600' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.6rem center;
+            padding-right: 2rem !important;
         }
 
         label {
@@ -68,126 +99,30 @@
             color: #888;
             text-transform: uppercase;
             font-weight: bold;
+            margin-bottom: 4px;
             display: block;
         }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
-    <main class="max-w-7xl mx-auto space-y-8 relative p-4 lightning-storm rounded-2xl">
+<body class="min-h-screen p-4 md:p-8 selection:bg-orange-600/40">
+    <main class="max-w-7xl mx-auto space-y-8 relative z-10 p-4 lightning-storm rounded-2xl">
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-zinc-800 pb-6 px-4">
             <div>
                 <p class="text-[10px] tracking-[0.4em] text-zinc-500 uppercase font-black mb-1 italic">
-                    [SYSTEM_READY] // PROTOCOL_V9.0 // SPEND_ONLY_MODE
+                    [SYSTEM_READY] // PROTOCOL_V5.9 // FREEDOM_PATCH_ACTIVE
                 </p>
-                <h1 class="text-3xl md:text-5xl font-black neon-glow-orange uppercase tracking-tighter">
+                <h1 class="text-3xl md:text-5xl font-black neon-glow-orange uppercase tracking-tighter leading-none">
                     Points Edge Dashboard
                 </h1>
+            </div>
+            <div class="mt-4 md:mt-0 flex gap-4 text-[10px] font-mono text-zinc-500 uppercase tracking-widest bg-zinc-900/50 p-2 rounded border border-zinc-800">
+                <div class="flex items-center gap-2 text-green-400">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> SIGNAL_STABLE
+                </div>
             </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-4">
             <section class="lg:col-span-5 space-y-6">
-                <div class="hud-panel p-6 rounded-xl border border-zinc-800">
-                    <h2 class="text-xs font-black tracking-[0.4em] text-orange-500 uppercase mb-3">> MISSION_PARAMETERS</h2>
-                    <div class="space-y-5" id="inputContainer">
-                        </div>
-                </div>
-            </section>
-
-            <section class="lg:col-span-7 space-y-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="hud-panel p-8 rounded-xl bg-black/40 border border-zinc-800">
-                        <p class="text-lg text-zinc-300 uppercase font-black mb-3">Monthly Yield</p>
-                        <p id="monthlyPoints" class="text-5xl font-black neon-glow-orange">0</p>
-                        <p id="rakutenMonthlySub" class="text-[10px] text-purple-400 italic mt-4">+0 Rakuten Potential</p>
-                    </div>
-                    <div class="hud-panel p-8 rounded-xl border-zinc-800 bg-black/40">
-                        <p class="text-lg text-zinc-300 uppercase font-black mb-3">Annual Valuation</p>
-                        <p id="annualValue" class="text-5xl font-black text-[#00FF9F]">$0</p>
-                        <p class="text-[10px] text-zinc-600 italic mt-4">@ 2.05 CPP Protocol</p>
-                    </div>
-                </div>
-
-                <div class="hud-panel p-8 rounded-xl border-zinc-800 bg-black/20">
-                    <div style="height: 250px; width: 100%;">
-                        <canvas id="breakdownChart"></canvas>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <script>
-        const cardDatabase = [
-            { id: 'csr', name: 'Sapphire Reserve', multipliers: { flight: 4, hotel: 4, travel: 1, dining: 3, grocery: 1, everyday: 1 } },
-            { id: 'platinum', name: 'Amex Platinum', multipliers: { flight: 5, hotel: 1, travel: 1, dining: 1, grocery: 1, everyday: 1 } },
-            { id: 'venture_x', name: 'Cap1 Venture X', multipliers: { flight: 2, hotel: 2, travel: 2, dining: 2, grocery: 2, everyday: 2 } }
-        ];
-
-        const categories = [
-            { key: 'flight', label: 'Flights' },
-            { key: 'hotel', label: 'Hotels' },
-            { key: 'dining', label: 'Dining' },
-            { key: 'grocery', label: 'Groceries' },
-            { key: 'everyday', label: 'Everyday Catch-all' }
-        ];
-
-        let breakdownChart;
-
-        function createSelectors() {
-            const container = document.getElementById('inputContainer');
-            categories.forEach(cat => {
-                const row = document.createElement('div');
-                row.className = 'grid grid-cols-12 gap-3 items-end border-b border-zinc-800 pb-3';
-                row.innerHTML = `
-                    <div class="col-span-5"><label>${cat.label}</label><input type="number" id="${cat.key}Spend" class="w-full" placeholder="0"></div>
-                    <div class="col-span-7"><label>Hardware</label><select id="${cat.key}Card" class="w-full">
-                    ${cardDatabase.map(card => `<option value="${card.id}">${card.name}</option>`).join('')}</select></div>`;
-                container.appendChild(row);
-            });
-        }
-
-        function updateHUD() {
-            let cardAnnTotal = 0;
-            let rakutenAnn = 0;
-            const chartData = [];
-            const chartLabels = [];
-
-            categories.forEach(cat => {
-                const spend = parseFloat(document.getElementById(`${cat.key}Spend`).value) || 0;
-                const cardId = document.getElementById(`${cat.key}Card`).value;
-                const card = cardDatabase.find(c => c.id === cardId);
-                const mult = card.multipliers[cat.key];
-                const catAnn = (spend * mult) * 12;
-                cardAnnTotal += catAnn;
-
-                if (cat.key === 'everyday') { rakutenAnn = (spend * 0.5 * 3) * 12; }
-                chartData.push(catAnn);
-                chartLabels.push(cat.label.toUpperCase());
-            });
-
-            document.getElementById('monthlyPoints').innerText = Math.floor(cardAnnTotal / 12).toLocaleString();
-            document.getElementById('rakutenMonthlySub').innerText = `+${Math.floor(rakutenAnn / 12).toLocaleString()} Rakuten Potential`;
-            document.getElementById('annualValue').innerText = '$' + Math.floor((cardAnnTotal + rakutenAnn) * 0.0205).toLocaleString();
-
-            if (breakdownChart) {
-                breakdownChart.data.labels = [...chartLabels, 'RAKUTEN'];
-                breakdownChart.data.datasets[0].data = [...chartData, rakutenAnn];
-                breakdownChart.update();
-            }
-        }
-
-        window.onload = () => {
-            createSelectors();
-            const ctx = document.getElementById('breakdownChart').getContext('2d');
-            breakdownChart = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: [], datasets: [{ data: [], backgroundColor: '#FF6600', borderRadius: 3 }]},
-                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-                scales: { x: { display: false }, y: { ticks: { color: '#888', font: { family: 'Tomorrow' } } } } }
-            });
-            document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', updateHUD));
-        };
-    </script>
-</body>
-</html>
+                <div class="hud-panel section-input-dark p-6 rounded-xl border border-zinc-800">
+                    <h2 class="
