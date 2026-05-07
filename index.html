@@ -10,794 +10,88 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;500;700;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #000000;
-      --panel: rgba(8, 8, 8, 0.92);
-      --panel-2: rgba(14, 14, 14, 0.96);
-      --border: rgba(255, 102, 0, 0.24);
-      --border-strong: rgba(255, 102, 0, 0.55);
-      --orange: #FF6600;
-      --green: #00FF9F;
-      --blue: #00D9FF;
-      --white: #F7F7F7;
-      --muted: #7D7D7D;
-      --grid: rgba(255, 102, 0, 0.06);
-      --scan: rgba(255, 255, 255, 0.03);
-      --danger: #ff9a57;
-      --shadow-orange: 0 0 24px rgba(255, 102, 0, 0.12);
-      --shadow-green: 0 0 20px rgba(0, 255, 159, 0.14);
-      --shadow-blue: 0 0 20px rgba(0, 217, 255, 0.16);
-      --radius: 18px;
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        linear-gradient(to bottom, rgba(255,255,255,0.015) 1px, transparent 1px),
-        linear-gradient(to right, rgba(255,102,0,0.04) 1px, transparent 1px),
-        radial-gradient(circle at 20% 0%, rgba(255,102,0,0.08), transparent 28%),
-        radial-gradient(circle at 85% 15%, rgba(0,217,255,0.08), transparent 22%),
-        var(--bg);
-      background-size: 100% 4px, 40px 40px, auto, auto, auto;
-      color: var(--white);
-      font-family: 'Roboto Mono', 'Courier New', monospace;
-      overflow-x: hidden;
-    }
-
-    .scanlines::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 3px,
-        var(--scan) 4px
-      );
-      opacity: 0.28;
-      mix-blend-mode: screen;
-      z-index: 1;
-    }
-
-    .scanline-sweep {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, rgba(255,102,0,0.2), transparent);
-      box-shadow: 0 0 18px rgba(255,102,0,0.15);
-      animation: sweep 14s linear infinite;
-      pointer-events: none;
-      z-index: 2;
-    }
-
-    @keyframes sweep {
-      0% { transform: translateY(-10vh); }
-      100% { transform: translateY(110vh); }
-    }
-
-    @keyframes lightning {
-      0%, 100% { box-shadow: inset 0 0 0 1px var(--border), 0 0 0 rgba(255,102,0,0); }
-      4% { box-shadow: inset 0 0 0 1px rgba(255,102,0,0.7), 0 0 20px rgba(255,102,0,0.18); }
-      6% { box-shadow: inset 0 0 0 1px rgba(0,217,255,0.5), 0 0 22px rgba(0,217,255,0.12); }
-      7% { box-shadow: inset 0 0 0 1px rgba(255,102,0,0.9), 0 0 28px rgba(255,102,0,0.2); }
-      12% { box-shadow: inset 0 0 0 1px var(--border), 0 0 0 rgba(255,102,0,0); }
-    }
-
-    .hud-shell {
-      position: relative;
-      z-index: 3;
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .hud-panel {
-      position: relative;
-      background: linear-gradient(180deg, rgba(16,16,16,0.96), rgba(7,7,7,0.94));
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-orange);
-      overflow: hidden;
-      animation: lightning 5.5s linear infinite;
-    }
-
-    .hud-panel::before,
-    .hud-panel::after {
-      content: "";
-      position: absolute;
-      width: 22px;
-      height: 22px;
-      border-color: var(--orange);
-      opacity: 0.8;
-    }
-
-    .hud-panel::before {
-      top: 10px;
-      left: 10px;
-      border-top: 2px solid var(--orange);
-      border-left: 2px solid var(--orange);
-    }
-
-    .hud-panel::after {
-      right: 10px;
-      bottom: 10px;
-      border-right: 2px solid var(--orange);
-      border-bottom: 2px solid var(--orange);
-    }
-
-    .hud-header, .section-title, .metric-value, .status-text {
-      font-family: 'Tomorrow', sans-serif;
-    }
-
-    .hud-header {
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--orange);
-      text-shadow: 0 0 10px rgba(255,102,0,0.35);
-    }
-
-    .mono-muted {
-      color: var(--muted);
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-
-    .blue-glow { color: var(--blue); text-shadow: 0 0 10px rgba(0,217,255,0.35); }
-    .green-glow { color: var(--green); text-shadow: 0 0 10px rgba(0,255,159,0.35); }
-    .orange-glow { color: var(--orange); text-shadow: 0 0 10px rgba(255,102,0,0.35); }
-
-    .metric-card {
-      min-height: 148px;
-      padding: 1.15rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      background: linear-gradient(180deg, rgba(10,10,10,0.9), rgba(2,2,2,0.92));
-    }
-
-    .metric-value {
-      font-size: clamp(2rem, 4vw, 3.6rem);
-      line-height: 0.95;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-    }
-
-    .sub-grid {
-      display: grid;
-      gap: 1rem;
-    }
-
-    @media (min-width: 1100px) {
-      .sub-grid {
-        grid-template-columns: 1.15fr 0.85fr;
-      }
-    }
-
-    .input-grid {
-      display: grid;
-      gap: 0.9rem;
-    }
-
-    .input-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.7rem;
-      padding-bottom: 0.85rem;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-
-    @media (min-width: 640px) {
-      .input-row {
-        grid-template-columns: 1.15fr 0.85fr;
-      }
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.32rem;
-      color: #9a9a9a;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    input, select {
-      width: 100%;
-      min-height: 46px;
-      padding: 0.8rem 0.9rem;
-      border-radius: 12px;
-      border: 1px solid rgba(255,102,0,0.28);
-      background: rgba(0,0,0,0.88);
-      color: var(--orange);
-      outline: none;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-    }
-
-    input:focus, select:focus {
-      border-color: rgba(255,102,0,0.95);
-      box-shadow: 0 0 0 3px rgba(255,102,0,0.12), 0 0 18px rgba(255,102,0,0.08);
-    }
-
-    select {
-      appearance: none;
-      background-image: linear-gradient(45deg, transparent 50%, var(--orange) 50%), linear-gradient(135deg, var(--orange) 50%, transparent 50%);
-      background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
-      background-size: 6px 6px, 6px 6px;
-      background-repeat: no-repeat;
-      padding-right: 2.2rem;
-    }
-
-    input[type="checkbox"] {
-      width: 0;
-      height: 0;
-      opacity: 0;
-      position: absolute;
-    }
-
-    .toggle-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      padding: 0.95rem 1rem;
-      border: 1px solid rgba(0,217,255,0.25);
-      border-radius: 14px;
-      background: rgba(0, 217, 255, 0.05);
-      box-shadow: var(--shadow-blue);
-    }
-
-    .toggle {
-      position: relative;
-      width: 66px;
-      height: 34px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 999px;
-      display: inline-block;
-      transition: background 180ms ease;
-      cursor: pointer;
-    }
-
-    .toggle::after {
-      content: "";
-      position: absolute;
-      top: 4px;
-      left: 4px;
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      background: var(--orange);
-      box-shadow: 0 0 14px rgba(255,102,0,0.3);
-      transition: transform 180ms ease, background 180ms ease;
-    }
-
-    input[type="checkbox"]:checked + .toggle {
-      background: rgba(0,255,159,0.16);
-      border-color: rgba(0,255,159,0.45);
-    }
-
-    input[type="checkbox"]:checked + .toggle::after {
-      transform: translateX(32px);
-      background: var(--green);
-      box-shadow: 0 0 14px rgba(0,255,159,0.35);
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.45rem 0.75rem;
-      border-radius: 999px;
-      border: 1px solid rgba(0,255,159,0.22);
-      background: rgba(0,255,159,0.08);
-      color: var(--green);
-      font-size: 0.76rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .status-pill.fail {
-      border-color: rgba(255,102,0,0.24);
-      background: rgba(255,102,0,0.08);
-      color: var(--orange);
-    }
-
-    .tiny {
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,102,0,0.5), transparent);
-    }
-
-    .table-mini {
-      display: grid;
-      gap: 0.8rem;
-    }
-
-    .table-mini-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      padding-bottom: 0.55rem;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .chart-wrap {
-      position: relative;
-      min-height: 320px;
-    }
-
-    .blue-frame {
-      border-color: rgba(0,217,255,0.26);
-      box-shadow: var(--shadow-blue);
-    }
-
-    .green-frame {
-      border-color: rgba(0,255,159,0.25);
-      box-shadow: var(--shadow-green);
-    }
-
-    .mission-note {
-      color: #a9a9a9;
-      font-size: 0.82rem;
-      line-height: 1.6;
-    }
-
-    .hidden { display: none !important; }
+    :root { --bg:#000000; --border:rgba(255,102,0,.24); --orange:#FF6600; --green:#00FF9F; --blue:#00D9FF; --white:#F7F7F7; --muted:#7D7D7D; --scan:rgba(255,255,255,.03); --shadow-orange:0 0 24px rgba(255,102,0,.12); --shadow-green:0 0 20px rgba(0,255,159,.14); --shadow-blue:0 0 20px rgba(0,217,255,.16); --radius:18px; }
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;min-height:100vh;background:linear-gradient(to bottom,rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(to right,rgba(255,102,0,.04) 1px,transparent 1px),radial-gradient(circle at 20% 0%,rgba(255,102,0,.08),transparent 28%),radial-gradient(circle at 85% 15%,rgba(0,217,255,.08),transparent 22%),#000;background-size:100% 4px,40px 40px,auto,auto,auto;color:var(--white);font-family:'Roboto Mono','Courier New',monospace;overflow-x:hidden}
+    .scanlines::before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,var(--scan) 4px);opacity:.28;mix-blend-mode:screen;z-index:1}
+    .scanline-sweep{position:fixed;left:0;top:0;width:100%;height:3px;background:linear-gradient(90deg,transparent,rgba(255,102,0,.2),transparent);box-shadow:0 0 18px rgba(255,102,0,.15);animation:sweep 14s linear infinite;pointer-events:none;z-index:2}
+    @keyframes sweep{0%{transform:translateY(-10vh)}100%{transform:translateY(110vh)}}
+    @keyframes lightning{0%,100%{box-shadow:inset 0 0 0 1px var(--border),0 0 0 rgba(255,102,0,0)}4%{box-shadow:inset 0 0 0 1px rgba(255,102,0,.7),0 0 20px rgba(255,102,0,.18)}6%{box-shadow:inset 0 0 0 1px rgba(0,217,255,.5),0 0 22px rgba(0,217,255,.12)}7%{box-shadow:inset 0 0 0 1px rgba(255,102,0,.9),0 0 28px rgba(255,102,0,.2)}12%{box-shadow:inset 0 0 0 1px var(--border),0 0 0 rgba(255,102,0,0)}}
+    .hud-shell{position:relative;z-index:3;max-width:1320px;margin:0 auto;padding:20px}.hud-panel{position:relative;background:linear-gradient(180deg,rgba(16,16,16,.96),rgba(7,7,7,.94));border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-orange);overflow:hidden;animation:lightning 5.5s linear infinite}
+    .hud-panel::before,.hud-panel::after{content:"";position:absolute;width:22px;height:22px;border-color:var(--orange);opacity:.8}.hud-panel::before{top:10px;left:10px;border-top:2px solid var(--orange);border-left:2px solid var(--orange)}.hud-panel::after{right:10px;bottom:10px;border-right:2px solid var(--orange);border-bottom:2px solid var(--orange)}
+    .hud-header,.section-title,.metric-value,.status-text{font-family:'Tomorrow',sans-serif}.hud-header{letter-spacing:.06em;text-transform:uppercase;color:var(--orange);text-shadow:0 0 10px rgba(255,102,0,.35)}.mono-muted{color:var(--muted);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
+    .blue-glow{color:var(--blue);text-shadow:0 0 10px rgba(0,217,255,.35)}.green-glow{color:var(--green);text-shadow:0 0 10px rgba(0,255,159,.35)}.orange-glow{color:var(--orange);text-shadow:0 0 10px rgba(255,102,0,.35)}
+    .metric-card{min-height:148px;padding:1.15rem;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(180deg,rgba(10,10,10,.9),rgba(2,2,2,.92))}.metric-value{font-size:clamp(2rem,4vw,3.6rem);line-height:.95;font-weight:800;letter-spacing:-.04em}
+    .sub-grid{display:grid;gap:1rem}@media (min-width:1100px){.sub-grid{grid-template-columns:1.1fr .9fr}} .input-grid{display:grid;gap:.9rem}.input-row{display:grid;grid-template-columns:1fr;gap:.7rem;padding-bottom:.85rem;border-bottom:1px solid rgba(255,255,255,.06)}@media (min-width:640px){.input-row{grid-template-columns:1.15fr .85fr}}
+    label{display:block;margin-bottom:.32rem;color:#9a9a9a;font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+    input,select{width:100%;min-height:46px;padding:.8rem .9rem;border-radius:12px;border:1px solid rgba(255,102,0,.28);background:rgba(0,0,0,.88);color:var(--orange);outline:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
+    input:focus,select:focus{border-color:rgba(255,102,0,.95);box-shadow:0 0 0 3px rgba(255,102,0,.12),0 0 18px rgba(255,102,0,.08)}
+    select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--orange) 50%),linear-gradient(135deg,var(--orange) 50%,transparent 50%);background-position:calc(100% - 18px) calc(50% - 3px),calc(100% - 12px) calc(50% - 3px);background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:2.2rem}
+    input[type="checkbox"]{width:0;height:0;opacity:0;position:absolute}.toggle-wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.95rem 1rem;border:1px solid rgba(0,217,255,.25);border-radius:14px;background:rgba(0,217,255,.05);box-shadow:var(--shadow-blue)}
+    .toggle{position:relative;width:66px;height:34px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:999px;display:inline-block;transition:background 180ms ease;cursor:pointer}.toggle::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:999px;background:var(--orange);box-shadow:0 0 14px rgba(255,102,0,.3);transition:transform 180ms ease,background 180ms ease}
+    input[type="checkbox"]:checked + .toggle{background:rgba(0,255,159,.16);border-color:rgba(0,255,159,.45)} input[type="checkbox"]:checked + .toggle::after{transform:translateX(32px);background:var(--green);box-shadow:0 0 14px rgba(0,255,159,.35)}
+    .status-pill{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .75rem;border-radius:999px;border:1px solid rgba(0,255,159,.22);background:rgba(0,255,159,.08);color:var(--green);font-size:.76rem;letter-spacing:.12em;text-transform:uppercase}.status-pill.fail{border-color:rgba(255,102,0,.24);background:rgba(255,102,0,.08);color:var(--orange)}
+    .tiny{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,102,0,.5),transparent)}.table-mini{display:grid;gap:.8rem}
+    .table-mini-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-bottom:.55rem;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}.chart-wrap{position:relative;min-height:360px}.blue-frame{border-color:rgba(0,217,255,.26);box-shadow:var(--shadow-blue)}.green-frame{border-color:rgba(0,255,159,.25);box-shadow:var(--shadow-green)}.mission-note{color:#a9a9a9;font-size:.82rem;line-height:1.6}.hidden{display:none!important}.yield-grid{display:grid;gap:.8rem}@media (min-width:640px){.yield-grid{grid-template-columns:1fr 1fr}} .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
   </style>
 </head>
 <body class="scanlines">
-  <div class="scanline-sweep"></div>
-
-  <main class="hud-shell">
-    <a href="#mainContent" class="sr-only">Skip to content</a>
-
-    <header class="hud-panel p-5 md:p-6 mb-5">
-      <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p class="mono-muted mb-2">[SYSTEM_READY] // POINTS_EDGE // MISSION HUD V12</p>
-          <h1 class="hud-header text-3xl md:text-5xl font-extrabold leading-none">Points Edge Mission HUD</h1>
-        </div>
-        <div class="grid gap-3 md:text-right">
-          <div class="tiny text-zinc-500">Bilt Spend Ratio</div>
-          <div id="biltRatio" class="status-text text-3xl font-extrabold blue-glow">0.0%</div>
-          <div class="tiny text-zinc-500">Signal: Stable</div>
-        </div>
-      </div>
-    </header>
-
-    <section id="mainContent" class="sub-grid">
-      <div class="grid gap-5">
-        <section class="hud-panel p-5 md:p-6" aria-labelledby="missionParametersHeading">
-          <div class="flex items-center justify-between gap-4 mb-5">
-            <h2 id="missionParametersHeading" class="section-title text-lg md:text-xl orange-glow uppercase tracking-[0.18em]">Mission Parameters</h2>
-            <div class="tiny text-zinc-500">7 Spend Channels</div>
-          </div>
-
-          <div class="input-grid" id="inputsContainer"></div>
-
-          <div class="divider my-5"></div>
-
-          <div class="grid gap-4">
-            <div class="toggle-wrap">
-              <div>
-                <div class="section-title blue-glow uppercase tracking-[0.14em] text-sm">Mortgage Extraction</div>
-                <div class="tiny text-zinc-400 mt-1">Enable bonus if Bilt spend reaches 75% of mortgage.</div>
-              </div>
-              <label class="mb-0 relative inline-flex items-center" aria-label="Toggle mortgage extraction">
-                <input type="checkbox" id="mortgageToggle" />
-                <span class="toggle"></span>
-              </label>
-            </div>
-
-            <div id="mortgageBlock" class="hidden">
-              <label for="mortgageInput">Monthly Mortgage</label>
-              <input type="number" id="mortgageInput" inputmode="decimal" min="0" step="1" placeholder="0" />
-            </div>
-
-            <div class="grid gap-3 md:grid-cols-2">
-              <div class="hud-panel blue-frame p-4">
-                <div class="tiny text-zinc-500 mb-2">Obsidian Dynamic Pivot</div>
-                <label for="obsidianPivot">Choose 3x Category</label>
-                <select id="obsidianPivot">
-                  <option value="dining" selected>Dining @ 3x / Grocery @ 1x</option>
-                  <option value="grocery">Grocery @ 3x / Dining @ 1x</option>
-                </select>
-              </div>
-              <div class="hud-panel p-4">
-                <div class="tiny text-zinc-500 mb-2">Extraction State</div>
-                <div id="successState" class="status-pill fail">Standby</div>
-                <div id="seventyFiveRuleText" class="mission-note mt-3">75% rule inactive until mortgage extraction is enabled.</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="hud-panel p-5 md:p-6" aria-labelledby="hardwareLoadoutHeading">
-          <h2 id="hardwareLoadoutHeading" class="section-title text-lg orange-glow uppercase tracking-[0.18em] mb-4">Hardware Loadout</h2>
-          <div class="table-mini">
-            <div class="table-mini-row"><span class="text-zinc-400">CSR</span><span class="orange-glow">4x Flights, 4x Hotels, 3x Dining, 1x Everything Else</span></div>
-            <div class="table-mini-row"><span class="text-zinc-400">Freedom Unlimited</span><span class="orange-glow">1.5x Everything, 3x Dining, 3x Drug Stores</span></div>
-            <div class="table-mini-row"><span class="text-zinc-400">Bilt Palladium</span><span class="blue-glow">2x Every Category</span></div>
-            <div class="table-mini-row border-b-0 pb-0"><span class="text-zinc-400">Bilt Obsidian</span><span class="blue-glow">2x Flights / Hotels / Travel, Dynamic 3x Dining or Grocery</span></div>
-          </div>
-        </section>
-      </div>
-
-      <div class="grid gap-5">
-        <section class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          <article class="hud-panel metric-card">
-            <div class="tiny text-zinc-500">Current Monthly Yield</div>
-            <div id="monthlyYield" class="metric-value orange-glow">0</div>
-            <div class="tiny text-zinc-600">PTS</div>
-          </article>
-          <article class="hud-panel metric-card green-frame">
-            <div class="tiny text-zinc-500">Annual Inventory</div>
-            <div id="annualInventory" class="metric-value green-glow">0</div>
-            <div class="tiny text-zinc-600">PTS</div>
-          </article>
-          <article class="hud-panel metric-card blue-frame sm:col-span-2 xl:col-span-1">
-            <div class="tiny text-zinc-500">Extraction Value</div>
-            <div id="extractionValue" class="metric-value green-glow">$0</div>
-            <div class="tiny text-zinc-600">USD @ 2.05cpp</div>
-          </article>
-        </section>
-
-        <section class="hud-panel p-5 md:p-6" aria-labelledby="chartHeading">
-          <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-4">
-            <div>
-              <h2 id="chartHeading" class="section-title text-lg orange-glow uppercase tracking-[0.18em]">Inventory Distribution</h2>
-              <p class="mission-note">Horizontal category bar chart with a dedicated mortgage bonus channel that only appears during extraction success.</p>
-            </div>
-            <div class="tiny text-zinc-500">Chart.js Tactical Feed</div>
-          </div>
-          <div class="chart-wrap">
-            <canvas id="distributionChart"></canvas>
-          </div>
-        </section>
-
-        <section class="grid gap-5 lg:grid-cols-2">
-          <article class="hud-panel p-5">
-            <h2 class="section-title text-base blue-glow uppercase tracking-[0.18em] mb-4">Bilt Core Tracker</h2>
-            <div class="table-mini">
-              <div class="table-mini-row"><span class="text-zinc-400">Palladium Spend</span><span id="palladiumSpend" class="blue-glow">$0</span></div>
-              <div class="table-mini-row"><span class="text-zinc-400">Obsidian Spend</span><span id="obsidianSpend" class="blue-glow">$0</span></div>
-              <div class="table-mini-row"><span class="text-zinc-400">Combined Bilt Spend</span><span id="combinedBiltSpend" class="blue-glow">$0</span></div>
-              <div class="table-mini-row border-b-0 pb-0"><span class="text-zinc-400">Mortgage Bonus</span><span id="mortgageBonus" class="green-glow">0 pts</span></div>
-            </div>
-          </article>
-
-          <article class="hud-panel p-5">
-            <h2 class="section-title text-base orange-glow uppercase tracking-[0.18em] mb-4">Card Yield Breakdown</h2>
-            <div class="table-mini">
-              <div class="table-mini-row"><span class="text-zinc-400">CSR Yield</span><span id="csrYield" class="orange-glow">0 pts</span></div>
-              <div class="table-mini-row"><span class="text-zinc-400">Freedom Yield</span><span id="freedomYield" class="orange-glow">0 pts</span></div>
-              <div class="table-mini-row"><span class="text-zinc-400">Palladium Yield</span><span id="palladiumYield" class="blue-glow">0 pts</span></div>
-              <div class="table-mini-row border-b-0 pb-0"><span class="text-zinc-400">Obsidian Yield</span><span id="obsidianYield" class="blue-glow">0 pts</span></div>
-            </div>
-          </article>
-        </section>
-      </div>
-    </section>
-  </main>
-
-  <script>
-    const spendCategories = [
-      { key: 'flights', label: 'Flights', recommended: 'csr' },
-      { key: 'hotels', label: 'Hotels', recommended: 'csr' },
-      { key: 'travel', label: 'Other Travel', recommended: 'obsidian' },
-      { key: 'dining', label: 'Dining', recommended: 'csr' },
-      { key: 'groceries', label: 'Groceries', recommended: 'palladium' },
-      { key: 'drugstores', label: 'Drug Stores', recommended: 'freedom' },
-      { key: 'everyday', label: 'Everyday Catch-All', recommended: 'freedom' }
-    ];
-
-    const cardOptions = {
-      csr: 'CSR',
-      freedom: 'Freedom Unlimited',
-      palladium: 'Bilt Palladium',
-      obsidian: 'Bilt Obsidian'
-    };
-
-    const CPP = 0.0205;
-    let distributionChart;
-
-    function getObsidianMultipliers() {
-      const pivot = document.getElementById('obsidianPivot').value;
-      return {
-        flights: 2,
-        hotels: 2,
-        travel: 2,
-        dining: pivot === 'dining' ? 3 : 1,
-        groceries: pivot === 'grocery' ? 3 : 1,
-        drugstores: 1,
-        everyday: 1
-      };
-    }
-
-    function getCardMultipliers() {
-      return {
-        csr: {
-          flights: 4,
-          hotels: 4,
-          travel: 1,
-          dining: 3,
-          groceries: 1,
-          drugstores: 1,
-          everyday: 1
-        },
-        freedom: {
-          flights: 1.5,
-          hotels: 1.5,
-          travel: 1.5,
-          dining: 3,
-          groceries: 1.5,
-          drugstores: 3,
-          everyday: 1.5
-        },
-        palladium: {
-          flights: 2,
-          hotels: 2,
-          travel: 2,
-          dining: 2,
-          groceries: 2,
-          drugstores: 2,
-          everyday: 2
-        },
-        obsidian: getObsidianMultipliers()
-      };
-    }
-
-    function formatNumber(value) {
-      return Math.round(value).toLocaleString();
-    }
-
-    function formatCurrency(value) {
-      return '$' + Math.round(value).toLocaleString();
-    }
-
-    function buildInputs() {
-      const root = document.getElementById('inputsContainer');
-      root.innerHTML = spendCategories.map(category => `
-        <div class="input-row">
-          <div>
-            <label for="${category.key}Spend">${category.label}</label>
-            <input type="number" id="${category.key}Spend" min="0" step="1" placeholder="0" value="0" />
-          </div>
-          <div>
-            <label for="${category.key}Card">Assigned Hardware</label>
-            <select id="${category.key}Card">
-              ${Object.entries(cardOptions).map(([value, label]) => `<option value="${value}" ${value === category.recommended ? 'selected' : ''}>${label}</option>`).join('')}
-            </select>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function collectSpend() {
-      return spendCategories.reduce((acc, category) => {
-        acc[category.key] = parseFloat(document.getElementById(category.key + 'Spend').value) || 0;
-        return acc;
-      }, {});
-    }
-
-    function calculateState() {
-      const spend = collectSpend();
-      const multipliers = getCardMultipliers();
-      const monthlyByCard = { csr: 0, freedom: 0, palladium: 0, obsidian: 0 };
-      const chartEntries = [];
-      const cardSpend = { palladium: 0, obsidian: 0 };
-
-      spendCategories.forEach(category => {
-        const assignedCard = document.getElementById(category.key + 'Card').value;
-        const amount = spend[category.key];
-        const earned = amount * multipliers[assignedCard][category.key];
-        monthlyByCard[assignedCard] += earned;
-        if (assignedCard === 'palladium' || assignedCard === 'obsidian') {
-          cardSpend[assignedCard] += amount;
-        }
-        chartEntries.push({
-          label: category.label.toUpperCase(),
-          value: earned * 12,
-          color: assignedCard === 'palladium' || assignedCard === 'obsidian' ? '#00D9FF' : '#FF6600'
-        });
-      });
-
-      const biltSpend = cardSpend.palladium + cardSpend.obsidian;
-      const mortgageEnabled = document.getElementById('mortgageToggle').checked;
-      const monthlyMortgage = parseFloat(document.getElementById('mortgageInput').value) || 0;
-      const threshold = monthlyMortgage * 0.75;
-      const qualifies = mortgageEnabled && monthlyMortgage > 0 && biltSpend >= threshold;
-      const mortgageBonusMonthly = qualifies ? monthlyMortgage : 0;
-      const mortgageBonusAnnual = mortgageBonusMonthly * 12;
-
-      if (mortgageBonusAnnual > 0) {
-        chartEntries.push({ label: 'MORTGAGE BONUS', value: mortgageBonusAnnual, color: '#00FF9F' });
-      }
-
-      const monthlyBase = Object.values(monthlyByCard).reduce((sum, value) => sum + value, 0);
-      const monthlyYield = monthlyBase + mortgageBonusMonthly;
-      const annualInventory = monthlyYield * 12;
-      const extractionValue = annualInventory * CPP;
-      const biltRatio = mortgageEnabled && monthlyMortgage > 0 ? (biltSpend / monthlyMortgage) * 100 : 0;
-
-      return {
-        monthlyByCard,
-        chartEntries,
-        biltSpend,
-        cardSpend,
-        mortgageEnabled,
-        monthlyMortgage,
-        threshold,
-        qualifies,
-        mortgageBonusMonthly,
-        mortgageBonusAnnual,
-        monthlyYield,
-        annualInventory,
-        extractionValue,
-        biltRatio
-      };
-    }
-
-    function updateSummary(state) {
-      document.getElementById('monthlyYield').textContent = formatNumber(state.monthlyYield);
-      document.getElementById('annualInventory').textContent = formatNumber(state.annualInventory);
-      document.getElementById('extractionValue').textContent = formatCurrency(state.extractionValue);
-      document.getElementById('biltRatio').textContent = state.biltRatio.toFixed(1) + '%';
-
-      document.getElementById('palladiumSpend').textContent = formatCurrency(state.cardSpend.palladium);
-      document.getElementById('obsidianSpend').textContent = formatCurrency(state.cardSpend.obsidian);
-      document.getElementById('combinedBiltSpend').textContent = formatCurrency(state.biltSpend);
-      document.getElementById('mortgageBonus').textContent = formatNumber(state.mortgageBonusAnnual) + ' pts';
-
-      document.getElementById('csrYield').textContent = formatNumber(state.monthlyByCard.csr * 12) + ' pts';
-      document.getElementById('freedomYield').textContent = formatNumber(state.monthlyByCard.freedom * 12) + ' pts';
-      document.getElementById('palladiumYield').textContent = formatNumber(state.monthlyByCard.palladium * 12) + ' pts';
-      document.getElementById('obsidianYield').textContent = formatNumber(state.monthlyByCard.obsidian * 12) + ' pts';
-
-      const stateNode = document.getElementById('successState');
-      const ruleNode = document.getElementById('seventyFiveRuleText');
-
-      if (!state.mortgageEnabled) {
-        stateNode.textContent = 'Standby';
-        stateNode.className = 'status-pill fail';
-        ruleNode.textContent = '75% rule inactive until mortgage extraction is enabled.';
-      } else if (state.monthlyMortgage <= 0) {
-        stateNode.textContent = 'Awaiting Mortgage';
-        stateNode.className = 'status-pill fail';
-        ruleNode.textContent = 'Enter a monthly mortgage to evaluate the 75% Bilt spend threshold.';
-      } else if (state.qualifies) {
-        stateNode.textContent = 'System Success';
-        stateNode.className = 'status-pill';
-        ruleNode.textContent = `75% rule met. Combined Bilt spend is ${formatCurrency(state.biltSpend)} against a ${formatCurrency(state.threshold)} threshold, so the full monthly mortgage is added as bonus points.`;
-      } else {
-        stateNode.textContent = 'Threshold Miss';
-        stateNode.className = 'status-pill fail';
-        ruleNode.textContent = `Combined Bilt spend is ${formatCurrency(state.biltSpend)}. Reach ${formatCurrency(state.threshold)} to trigger the mortgage bonus.`;
-      }
-    }
-
-    const valueLabelPlugin = {
-      id: 'valueLabelPlugin',
-      afterDatasetsDraw(chart) {
-        const { ctx } = chart;
-        ctx.save();
-        ctx.font = '700 11px Roboto Mono';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#A0A0A0';
-        const meta = chart.getDatasetMeta(0);
-        chart.data.datasets[0].data.forEach((value, index) => {
-          const bar = meta.data[index];
-          if (!bar || value <= 0) return;
-          ctx.fillText(Math.round(value).toLocaleString(), bar.x + 10, bar.y);
-        });
-        ctx.restore();
-      }
-    };
-
-    function initChart() {
-      const ctx = document.getElementById('distributionChart').getContext('2d');
-      distributionChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: [],
-          datasets: [{
-            data: [],
-            backgroundColor: [],
-            borderColor: [],
-            borderWidth: 1,
-            borderRadius: 8,
-            barThickness: 16
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
-          layout: { padding: { right: 70 } },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#050505',
-              borderColor: 'rgba(255,102,0,0.25)',
-              borderWidth: 1,
-              displayColors: true,
-              titleFont: { family: 'Tomorrow', size: 11, weight: '700' },
-              bodyFont: { family: 'Roboto Mono', size: 11 },
-              callbacks: {
-                label: (context) => `${Math.round(context.raw).toLocaleString()} pts annually`
-              }
-            }
-          },
-          scales: {
-            x: {
-              beginAtZero: true,
-              grid: { color: 'rgba(255,255,255,0.05)' },
-              ticks: {
-                color: '#7f7f7f',
-                font: { family: 'Roboto Mono', size: 10 },
-                callback: (value) => Math.round(value).toLocaleString()
-              }
-            },
-            y: {
-              grid: { display: false },
-              ticks: {
-                color: '#d5d5d5',
-                font: { family: 'Tomorrow', size: 10, weight: '700' }
-              }
-            }
-          }
-        },
-        plugins: [valueLabelPlugin]
-      });
-    }
-
-    function updateChart(state) {
-      distributionChart.data.labels = state.chartEntries.map(entry => entry.label);
-      distributionChart.data.datasets[0].data = state.chartEntries.map(entry => entry.value);
-      distributionChart.data.datasets[0].backgroundColor = state.chartEntries.map(entry => entry.color + 'CC');
-      distributionChart.data.datasets[0].borderColor = state.chartEntries.map(entry => entry.color);
-      distributionChart.update();
-    }
-
-    function syncMortgageUI() {
-      document.getElementById('mortgageBlock').classList.toggle('hidden', !document.getElementById('mortgageToggle').checked);
-    }
-
-    function refresh() {
-      syncMortgageUI();
-      const state = calculateState();
-      updateSummary(state);
-      updateChart(state);
-    }
-
-    function bindEvents() {
-      document.querySelectorAll('input, select').forEach(el => {
-        el.addEventListener('input', refresh);
-        el.addEventListener('change', refresh);
-      });
-    }
-
-    buildInputs();
-    initChart();
-    bindEvents();
-    refresh();
-  </script>
+<div class="scanline-sweep"></div>
+<main class="hud-shell">
+<a href="#mainContent" class="sr-only">Skip to content</a>
+<header class="hud-panel p-5 md:p-6 mb-5">
+<div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+<div><p class="mono-muted mb-2">[SYSTEM_READY] // POINTS_EDGE // MISSION HUD V12</p><h1 class="hud-header text-3xl md:text-5xl font-extrabold leading-none">Points Edge Mission HUD</h1></div>
+<div class="grid gap-3 md:text-right"><div class="tiny text-zinc-500">Bilt Spend Ratio</div><div id="biltRatio" class="status-text text-3xl font-extrabold blue-glow">0.0%</div><div class="tiny text-zinc-500">Signal: Stable</div></div>
+</div></header>
+<section id="mainContent" class="sub-grid">
+<div class="grid gap-5">
+<section class="hud-panel p-5 md:p-6" aria-labelledby="missionParametersHeading">
+<div class="flex items-center justify-between gap-4 mb-5"><h2 id="missionParametersHeading" class="section-title text-lg md:text-xl orange-glow uppercase tracking-[0.18em]">Mission Parameters</h2><div class="tiny text-zinc-500">7 Spend Channels</div></div>
+<div class="hud-panel p-4 mb-4" style="border-color: rgba(255,102,0,0.32); background: rgba(255,102,0,0.06);"><div class="section-title text-sm orange-glow uppercase tracking-[0.16em]">System Directive: Enter Monthly Spend Below</div></div><div class="input-grid" id="inputsContainer"></div><div class="divider my-5"></div>
+<div class="grid gap-4"><div class="toggle-wrap"><div><div class="section-title blue-glow uppercase tracking-[0.14em] text-sm">Mortgage Extraction</div><div class="tiny text-zinc-400 mt-1">Enable bonus if Bilt spend reaches 75% of mortgage.</div></div><label class="mb-0 relative inline-flex items-center" aria-label="Toggle mortgage extraction"><input type="checkbox" id="mortgageToggle" /><span class="toggle"></span></label></div>
+<div id="mortgageBlock" class="hidden"><label for="mortgageInput">Monthly Mortgage</label><input type="number" id="mortgageInput" inputmode="decimal" min="0" step="1" placeholder="0" /></div>
+<div class="grid gap-3 md:grid-cols-2"><div class="hud-panel blue-frame p-4"><div class="tiny text-zinc-500 mb-2">Obsidian Dynamic Pivot</div><label for="obsidianPivot">Choose 3x Category</label><select id="obsidianPivot"><option value="dining" selected>Dining @ 3x / Grocery @ 1x</option><option value="grocery">Grocery @ 3x / Dining @ 1x</option></select></div><div class="hud-panel p-4"><div class="tiny text-zinc-500 mb-2">Extraction State</div><div id="successState" class="status-pill fail">Standby</div><div id="seventyFiveRuleText" class="mission-note mt-3">75% rule inactive until mortgage extraction is enabled.</div></div></div>
+</div></section>
+<section class="hud-panel p-5 md:p-6" aria-labelledby="hardwareLoadoutHeading"><h2 id="hardwareLoadoutHeading" class="section-title text-lg orange-glow uppercase tracking-[0.18em] mb-4">Hardware Loadout</h2><div class="table-mini">
+<div class="table-mini-row"><span class="text-zinc-400">CSR</span><span class="orange-glow">4x Flights, 4x Hotels, 3x Dining, 1x Everything Else</span></div>
+<div class="table-mini-row"><span class="text-zinc-400">Freedom Unlimited</span><span class="orange-glow">1.5x Everything, 3x Dining, 3x Drug Stores</span></div>
+<div class="table-mini-row"><span class="text-zinc-400">Capital One Venture</span><span class="orange-glow">2x Across Current Spend Categories</span></div>
+<div class="table-mini-row"><span class="text-zinc-400">Capital One Savor</span><span class="orange-glow">3x Dining, 3x Groceries, 1x Other Current Categories</span></div>
+<div class="table-mini-row"><span class="text-zinc-400">Wells Fargo Journey</span><span class="orange-glow">4x Flights, 5x Hotels, 3x Travel, 3x Dining, 1x Other Categories</span></div>
+<div class="table-mini-row"><span class="text-zinc-400">Amex Platinum</span><span class="orange-glow">5x Flights, 5x Hotels, 1x Travel and Non-Travel Categories</span></div>
+<div class="table-mini-row"><span class="text-zinc-400">Bilt Palladium</span><span class="blue-glow">2x Every Category</span></div>
+<div class="table-mini-row border-b-0 pb-0"><span class="text-zinc-400">Bilt Obsidian</span><span class="blue-glow">2x Flights / Hotels / Travel, Dynamic 3x Dining or Grocery</span></div>
+</div></section></div>
+<div class="grid gap-5">
+<section class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+<article class="hud-panel metric-card"><div class="tiny text-zinc-500">Current Monthly Yield</div><div id="monthlyYield" class="metric-value orange-glow">0</div><div class="tiny text-zinc-600">PTS</div></article>
+<article class="hud-panel metric-card green-frame"><div class="tiny text-zinc-500">Annual Inventory</div><div id="annualInventory" class="metric-value green-glow">0</div><div class="tiny text-zinc-600">PTS</div></article>
+<article class="hud-panel metric-card blue-frame sm:col-span-2 xl:col-span-1"><div class="tiny text-zinc-500">Extraction Value</div><div id="extractionValue" class="metric-value green-glow">$0</div><div class="tiny text-zinc-600">USD @ 2.05cpp</div></article>
+</section>
+<section class="hud-panel p-5 md:p-6" aria-labelledby="chartHeading"><div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-4"><div><h2 id="chartHeading" class="section-title text-lg orange-glow uppercase tracking-[0.18em]">Inventory Distribution</h2><p class="mission-note">Portal bonuses are ignored; travel cards are simplified around your existing direct-booking category structure.</p></div><div class="tiny text-zinc-500">Chart.js Tactical Feed</div></div><div class="chart-wrap"><canvas id="distributionChart"></canvas></div></section>
+<section class="grid gap-5 lg:grid-cols-2">
+<article class="hud-panel p-5"><h2 class="section-title text-base blue-glow uppercase tracking-[0.18em] mb-4">Bilt Core Tracker</h2><div class="table-mini"><div class="table-mini-row"><span class="text-zinc-400">Palladium Spend</span><span id="palladiumSpend" class="blue-glow">$0</span></div><div class="table-mini-row"><span class="text-zinc-400">Obsidian Spend</span><span id="obsidianSpend" class="blue-glow">$0</span></div><div class="table-mini-row"><span class="text-zinc-400">Combined Bilt Spend</span><span id="combinedBiltSpend" class="blue-glow">$0</span></div><div class="table-mini-row border-b-0 pb-0"><span class="text-zinc-400">Mortgage Bonus</span><span id="mortgageBonus" class="green-glow">0 pts</span></div></div></article>
+<article class="hud-panel p-5"><h2 class="section-title text-base orange-glow uppercase tracking-[0.18em] mb-4">Card Yield Breakdown</h2><div class="yield-grid"><div class="table-mini"><div class="table-mini-row"><span class="text-zinc-400">CSR Yield</span><span id="csrYield" class="orange-glow">0 pts</span></div><div class="table-mini-row"><span class="text-zinc-400">Freedom Yield</span><span id="freedomYield" class="orange-glow">0 pts</span></div><div class="table-mini-row"><span class="text-zinc-400">Venture Yield</span><span id="ventureYield" class="orange-glow">0 pts</span></div><div class="table-mini-row border-b-0 pb-0"><span class="text-zinc-400">Savor Yield</span><span id="savorYield" class="orange-glow">0 pts</span></div></div><div class="table-mini"><div class="table-mini-row"><span class="text-zinc-400">Journey Yield</span><span id="journeyYield" class="green-glow">0 pts</span></div><div class="table-mini-row"><span class="text-zinc-400">Amex Platinum Yield</span><span id="platinumYield" class="green-glow">0 pts</span></div><div class="table-mini-row"><span class="text-zinc-400">Palladium Yield</span><span id="palladiumYield" class="blue-glow">0 pts</span></div><div class="table-mini-row border-b-0 pb-0"><span class="text-zinc-400">Obsidian Yield</span><span id="obsidianYield" class="blue-glow">0 pts</span></div></div></div></article>
+</section></div></section></main>
+<script>
+const spendCategories=[{key:'flights',label:'Flights',recommended:'platinum'},{key:'hotels',label:'Hotels',recommended:'journey'},{key:'travel',label:'Other Travel',recommended:'journey'},{key:'dining',label:'Dining',recommended:'csr'},{key:'groceries',label:'Groceries',recommended:'savor'},{key:'drugstores',label:'Drug Stores',recommended:'freedom'},{key:'everyday',label:'Everyday Catch-All',recommended:'venture'}];
+const cardOptions={csr:'CSR',freedom:'Freedom Unlimited',venture:'Capital One Venture',savor:'Capital One Savor',journey:'Wells Fargo Journey',platinum:'Amex Platinum',palladium:'Bilt Palladium',obsidian:'Bilt Obsidian'};
+const CPP=.0205; let distributionChart;
+function getObsidianMultipliers(){const pivot=document.getElementById('obsidianPivot').value;return{flights:2,hotels:2,travel:2,dining:pivot==='dining'?3:1,groceries:pivot==='grocery'?3:1,drugstores:1,everyday:1}}
+function getCardMultipliers(){return{csr:{flights:4,hotels:4,travel:1,dining:3,groceries:1,drugstores:1,everyday:1},freedom:{flights:1.5,hotels:1.5,travel:1.5,dining:3,groceries:1.5,drugstores:3,everyday:1.5},venture:{flights:2,hotels:2,travel:2,dining:2,groceries:2,drugstores:2,everyday:2},savor:{flights:1,hotels:1,travel:1,dining:3,groceries:3,drugstores:1,everyday:1},journey:{flights:4,hotels:5,travel:3,dining:3,groceries:1,drugstores:1,everyday:1},platinum:{flights:5,hotels:5,travel:1,dining:1,groceries:1,drugstores:1,everyday:1},palladium:{flights:2,hotels:2,travel:2,dining:2,groceries:2,drugstores:2,everyday:2},obsidian:getObsidianMultipliers()}}
+function formatNumber(v){return Math.round(v).toLocaleString()} function formatCurrency(v){return '$'+Math.round(v).toLocaleString()}
+function buildInputs(){const root=document.getElementById('inputsContainer');root.innerHTML=spendCategories.map(category=>`<div class="input-row"><div><label for="${category.key}Spend">${category.label}</label><input type="number" id="${category.key}Spend" min="0" step="1" placeholder="0" value="0" /></div><div><label for="${category.key}Card">Assigned Hardware</label><select id="${category.key}Card">${Object.entries(cardOptions).map(([value,label])=>`<option value="${value}" ${value===category.recommended?'selected':''}>${label}</option>`).join('')}</select></div></div>`).join(''); if(!root.innerHTML.trim()){ root.innerHTML='<div class="mission-note">Spend inputs failed to initialize.</div>'; }}
+function collectSpend(){return spendCategories.reduce((acc,category)=>{acc[category.key]=parseFloat(document.getElementById(category.key+'Spend').value)||0;return acc},{})}
+function calculateState(){const spend=collectSpend();const multipliers=getCardMultipliers();const monthlyByCard={csr:0,freedom:0,venture:0,savor:0,journey:0,platinum:0,palladium:0,obsidian:0};const chartEntries=[];const cardSpend={palladium:0,obsidian:0};spendCategories.forEach(category=>{const assignedCard=document.getElementById(category.key+'Card').value;const amount=spend[category.key];const earned=amount*multipliers[assignedCard][category.key];monthlyByCard[assignedCard]+=earned;if(assignedCard==='palladium'||assignedCard==='obsidian')cardSpend[assignedCard]+=amount;const biltAssigned=assignedCard==='palladium'||assignedCard==='obsidian';const premiumTravelAssigned=assignedCard==='journey'||assignedCard==='platinum';chartEntries.push({label:category.label.toUpperCase(),value:earned*12,color:biltAssigned?'#00D9FF':premiumTravelAssigned?'#7CFFB2':'#FF6600'})});const biltSpend=cardSpend.palladium+cardSpend.obsidian;const mortgageEnabled=document.getElementById('mortgageToggle').checked;const monthlyMortgage=parseFloat(document.getElementById('mortgageInput').value)||0;const threshold=monthlyMortgage*.75;const qualifies=mortgageEnabled&&monthlyMortgage>0&&biltSpend>=threshold;const mortgageBonusMonthly=qualifies?monthlyMortgage:0;const mortgageBonusAnnual=mortgageBonusMonthly*12;if(mortgageBonusAnnual>0)chartEntries.push({label:'MORTGAGE BONUS',value:mortgageBonusAnnual,color:'#00FF9F'});const monthlyBase=Object.values(monthlyByCard).reduce((s,v)=>s+v,0);const monthlyYield=monthlyBase+mortgageBonusMonthly;const annualInventory=monthlyYield*12;const extractionValue=annualInventory*CPP;const biltRatio=mortgageEnabled&&monthlyMortgage>0?(biltSpend/monthlyMortgage)*100:0;return{monthlyByCard,chartEntries,biltSpend,cardSpend,mortgageEnabled,monthlyMortgage,threshold,qualifies,mortgageBonusAnnual,monthlyYield,annualInventory,extractionValue,biltRatio}}
+function updateSummary(state){document.getElementById('monthlyYield').textContent=formatNumber(state.monthlyYield);document.getElementById('annualInventory').textContent=formatNumber(state.annualInventory);document.getElementById('extractionValue').textContent=formatCurrency(state.extractionValue);document.getElementById('biltRatio').textContent=state.biltRatio.toFixed(1)+'%';document.getElementById('palladiumSpend').textContent=formatCurrency(state.cardSpend.palladium);document.getElementById('obsidianSpend').textContent=formatCurrency(state.cardSpend.obsidian);document.getElementById('combinedBiltSpend').textContent=formatCurrency(state.biltSpend);document.getElementById('mortgageBonus').textContent=formatNumber(state.mortgageBonusAnnual)+' pts';document.getElementById('csrYield').textContent=formatNumber(state.monthlyByCard.csr*12)+' pts';document.getElementById('freedomYield').textContent=formatNumber(state.monthlyByCard.freedom*12)+' pts';document.getElementById('ventureYield').textContent=formatNumber(state.monthlyByCard.venture*12)+' pts';document.getElementById('savorYield').textContent=formatNumber(state.monthlyByCard.savor*12)+' pts';document.getElementById('journeyYield').textContent=formatNumber(state.monthlyByCard.journey*12)+' pts';document.getElementById('platinumYield').textContent=formatNumber(state.monthlyByCard.platinum*12)+' pts';document.getElementById('palladiumYield').textContent=formatNumber(state.monthlyByCard.palladium*12)+' pts';document.getElementById('obsidianYield').textContent=formatNumber(state.monthlyByCard.obsidian*12)+' pts';const stateNode=document.getElementById('successState');const ruleNode=document.getElementById('seventyFiveRuleText');if(!state.mortgageEnabled){stateNode.textContent='Standby';stateNode.className='status-pill fail';ruleNode.textContent='75% rule inactive until mortgage extraction is enabled.'}else if(state.monthlyMortgage<=0){stateNode.textContent='Awaiting Mortgage';stateNode.className='status-pill fail';ruleNode.textContent='Enter a monthly mortgage to evaluate the 75% Bilt spend threshold.'}else if(state.qualifies){stateNode.textContent='System Success';stateNode.className='status-pill';ruleNode.textContent=`75% rule met. Combined Bilt spend is ${formatCurrency(state.biltSpend)} against a ${formatCurrency(state.threshold)} threshold, so the full monthly mortgage is added as bonus points.`}else{stateNode.textContent='Threshold Miss';stateNode.className='status-pill fail';ruleNode.textContent=`Combined Bilt spend is ${formatCurrency(state.biltSpend)}. Reach ${formatCurrency(state.threshold)} to trigger the mortgage bonus.`}}
+const valueLabelPlugin={id:'valueLabelPlugin',afterDatasetsDraw(chart){const{ctx}=chart;ctx.save();ctx.font='700 11px Roboto Mono';ctx.textBaseline='middle';ctx.fillStyle='#A0A0A0';const meta=chart.getDatasetMeta(0);chart.data.datasets[0].data.forEach((value,index)=>{const bar=meta.data[index];if(!bar||value<=0)return;ctx.fillText(Math.round(value).toLocaleString(),bar.x+10,bar.y)});ctx.restore()}};
+function initChart(){const ctx=document.getElementById('distributionChart').getContext('2d');distributionChart=new Chart(ctx,{type:'bar',data:{labels:[],datasets:[{data:[],backgroundColor:[],borderColor:[],borderWidth:1,borderRadius:8,barThickness:16}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,layout:{padding:{right:70}},plugins:{legend:{display:false},tooltip:{backgroundColor:'#050505',borderColor:'rgba(255,102,0,0.25)',borderWidth:1,displayColors:true,titleFont:{family:'Tomorrow',size:11,weight:'700'},bodyFont:{family:'Roboto Mono',size:11},callbacks:{label:(context)=>`${Math.round(context.raw).toLocaleString()} pts annually`}}},scales:{x:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#7f7f7f',font:{family:'Roboto Mono',size:10},callback:(value)=>Math.round(value).toLocaleString()}},y:{grid:{display:false},ticks:{color:'#d5d5d5',font:{family:'Tomorrow',size:10,weight:'700'}}}}},plugins:[valueLabelPlugin]})}
+function updateChart(state){distributionChart.data.labels=state.chartEntries.map(e=>e.label);distributionChart.data.datasets[0].data=state.chartEntries.map(e=>e.value);distributionChart.data.datasets[0].backgroundColor=state.chartEntries.map(e=>e.color+'CC');distributionChart.data.datasets[0].borderColor=state.chartEntries.map(e=>e.color);distributionChart.update()}
+function syncMortgageUI(){document.getElementById('mortgageBlock').classList.toggle('hidden',!document.getElementById('mortgageToggle').checked)}
+function refresh(){syncMortgageUI();const state=calculateState();updateSummary(state);updateChart(state)}
+function bindEvents(){document.querySelectorAll('input, select').forEach(el=>{el.addEventListener('input',refresh);el.addEventListener('change',refresh)})}
+buildInputs();initChart();bindEvents();refresh();
+</script>
 </body>
 </html>
